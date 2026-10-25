@@ -139,3 +139,43 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(82 82 91 / 0.8);
 }
+
+/* Invoice print mode — only the invoice sheet is visible on paper */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #111111 !important;
+    padding: 24px !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .print-area * {
+    color: #111111 !important;
+    border-color: #d4d4d8 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .print-area table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .print-area th,
+  .print-area td {
+    border-bottom: 1px solid #d4d4d8 !important;
+    text-align: left;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

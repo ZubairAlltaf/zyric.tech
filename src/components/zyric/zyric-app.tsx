@@ -15,6 +15,7 @@ import {
   CornerDownLeft,
   HardDrive,
   BadgeCheck,
+  Gem,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,12 +33,14 @@ const BADGE_STYLE: Record<string, string> = {
   new: "border-cyan-500/40 bg-cyan-500/10 text-cyan-300",
   local: "border-teal-500/40 bg-teal-500/10 text-teal-300",
   saved: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
+  unique: "border-amber-500/40 bg-amber-500/10 text-amber-300",
 };
 
 const BADGE_TEXT: Record<string, string> = {
   new: "New",
   local: "Private",
   saved: "Auto-saves",
+  unique: "Signature",
 };
 
 function SearchBox({
@@ -132,6 +135,7 @@ function HomeView({
 }) {
   const results = useMemo(() => searchTools(query), [query]);
   const searching = query.trim().length > 0;
+  const sigTools = useMemo(() => TOOLS.filter((t) => t.category === "signature"), []);
 
   return (
     <div className="space-y-12 pb-8">
@@ -179,9 +183,9 @@ function HomeView({
             transition={{ delay: 0.12 }}
             className="mt-4 text-sm leading-relaxed text-zinc-400 sm:text-base"
           >
-            zyric.tech is a growing box of free everyday tools — notes, expense &amp; habit
-            trackers, calculators, converters, generators and more. Everything runs
-            right here in your browser.
+            zyric.tech is a growing box of free everyday tools — notes, trackers, calculators, image tools,
+            generators and a set of signature problem-solvers you won’t find anywhere else. Everything runs right
+            here in your browser.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -234,7 +238,33 @@ function HomeView({
           )}
         </section>
       ) : (
-        CATEGORIES.map((cat) => {
+        <>
+          {/* Signature showcase */}
+          <section aria-labelledby="cat-signature-showcase">
+            <div className="mb-4 flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
+                <Gem className="h-4 w-4" aria-hidden />
+              </span>
+              <div>
+                <h2 id="cat-signature-showcase" className="text-lg font-semibold text-zinc-50">
+                  Signature tools — only here
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  Built in-house to solve problems no other free tool handles properly
+                </p>
+              </div>
+              <span className="ml-auto rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs text-amber-300">
+                {sigTools.length}
+              </span>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {sigTools.map((t, i) => (
+                <ToolCard key={t.id} tool={t} index={i} onOpen={() => onOpen(t.id)} />
+              ))}
+            </div>
+          </section>
+
+          {CATEGORIES.filter((cat) => cat.id !== "signature").map((cat) => {
           const tools = TOOLS.filter((t) => t.category === cat.id);
           return (
             <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
@@ -258,8 +288,9 @@ function HomeView({
                 ))}
               </div>
             </section>
-          );
-        })
+              );
+            })}
+          </>
       )}
     </div>
   );

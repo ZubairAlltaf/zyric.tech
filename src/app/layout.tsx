@@ -14,29 +14,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "zyric.tech — 23 Free Online Tools for Everything",
+  title: "zyric.tech — 55 Free Online Tools for Everything",
   description:
-    "Free online tools in every niche: quick notes, expense & habit trackers, to-do lists, calculators (BMI, loan, percentage, age), unit & currency converters, pomodoro timer, stopwatch, password generator, QR codes, JSON tools and more — all in your browser, no sign-up.",
+    "55 free browser tools, including 8 signature tools you won't find elsewhere: file submission checker, spreadsheet health inspector, document diff, website launch checker, expiry calendar, handover pack builder, privacy scrubber and file inspector — plus notes, trackers, calculators, converters, image & color tools, invoices and more. No sign-up, everything runs on your device.",
   keywords: [
     "free online tools",
     "web tools",
+    "file submission checker",
+    "spreadsheet health inspector",
+    "document diff",
+    "website audit tool",
+    "expiry calendar reminder",
     "notes app",
     "expense tracker",
     "habit tracker",
-    "todo list",
     "calculators",
     "unit converter",
-    "currency converter",
-    "pomodoro timer",
+    "image compressor",
+    "color palette generator",
+    "invoice generator",
     "password generator",
     "QR code generator",
-    "JSON formatter",
     "zyric",
   ],
   openGraph: {
-    title: "zyric.tech — Free Online Tools for Everything",
+    title: "zyric.tech — 55 Free Online Tools for Everything",
     description:
-      "22 free tools in one place: notes, trackers, calculators, converters, generators. Runs locally, no sign-up.",
+      "55 free tools in one place — including 8 signature tools exclusive to Zyric. Runs locally, no sign-up.",
     type: "website",
   },
 };

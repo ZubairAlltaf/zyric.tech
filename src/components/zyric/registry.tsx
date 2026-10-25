@@ -30,6 +30,35 @@ import {
   Clock3,
   Sparkles,
   Wand2,
+  Gem,
+  Images,
+  Briefcase,
+  FileCheck2,
+  ScanSearch,
+  Table2,
+  FileDiff,
+  Globe,
+  CalendarClock,
+  PackageCheck,
+  Shield,
+  ArrowDownAZ,
+  Replace,
+  ScanText,
+  Link2,
+  Tag,
+  Users,
+  Clock4,
+  Crown,
+  AlarmClock,
+  Hash,
+  Regex,
+  FileCode2,
+  ImageDown,
+  Scaling,
+  Star,
+  Pipette,
+  Contrast,
+  Printer,
 } from "lucide-react";
 
 import {
@@ -38,6 +67,12 @@ import {
   CaseConverterTool,
   LoremTool,
 } from "./text-tools";
+import {
+  TextSorterTool,
+  FindReplaceTool,
+  SummarizerTool,
+  SlugGeneratorTool,
+} from "./text-tools-add";
 import {
   ExpenseTool,
   HabitTool,
@@ -52,11 +87,22 @@ import {
   DateDiffTool,
 } from "./calc-tools";
 import {
+  DiscountTool,
+  VatTool,
+  TipTool,
+} from "./calc-tools-add";
+import {
   UnitConverterTool,
   CurrencyTool,
   PomodoroTool,
   StopwatchTool,
 } from "./convert-time-tools";
+import {
+  TimestampTool,
+  BaseConverterTool,
+  RomanTool,
+  CountdownTool,
+} from "./convert-tools-add";
 import {
   PasswordTool,
   UuidTool,
@@ -64,6 +110,41 @@ import {
   JsonTool,
   QrTool,
 } from "./dev-tools";
+import {
+  HashTool,
+  RegexTool,
+  MarkdownTool,
+} from "./dev-tools-add";
+import {
+  SubmissionCheckerTool,
+  FileInspectorTool,
+} from "./signature-tools";
+import {
+  CsvInspectorTool,
+  DocDiffTool,
+} from "./signature-tools2";
+import {
+  ExpiryCalendarTool,
+  HandoverBuilderTool,
+  PrivacyScrubberTool,
+} from "./signature-tools3";
+import { SiteCheckerTool } from "./site-checker";
+import {
+  ImageCompressorTool,
+  ImageResizerTool,
+  ImageBase64Tool,
+  FaviconTool,
+} from "./image-tools";
+import {
+  ColorConverterTool,
+  PaletteGeneratorTool,
+  ContrastTool,
+  GradientTool,
+} from "./color-tools";
+import {
+  InvoiceTool,
+  NumberWordsTool,
+} from "./biz-tools";
 import { RandomPickerTool } from "./random-tools";
 
 export interface ToolMeta {
@@ -73,25 +154,34 @@ export interface ToolMeta {
   category: CategoryId;
   icon: ComponentType<{ className?: string }>;
   keywords: string;
-  badge?: "new" | "local" | "saved";
+  badge?: "new" | "local" | "saved" | "unique";
   component: ComponentType;
 }
 
 export type CategoryId =
+  | "signature"
   | "notes"
   | "trackers"
   | "calculators"
   | "converters"
   | "time"
   | "generators"
+  | "media"
+  | "business"
   | "random";
 
 export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ className?: string }>; blurb: string }[] = [
   {
+    id: "signature",
+    label: "Signature Tools",
+    icon: Gem,
+    blurb: "Exclusive problem-solvers — file checks, document reviews, deadlines & privacy",
+  },
+  {
     id: "notes",
     label: "Notes & Writing",
     icon: StickyNote,
-    blurb: "Capture thoughts, count words, transform text",
+    blurb: "Capture thoughts, count words, transform and summarize text",
   },
   {
     id: "trackers",
@@ -103,25 +193,37 @@ export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ 
     id: "calculators",
     label: "Calculators",
     icon: Calculator,
-    blurb: "Percentages, loans, BMI, age and dates",
+    blurb: "Percentages, loans, BMI, discounts, tax and dates",
   },
   {
     id: "converters",
     label: "Converters",
     icon: Repeat2,
-    blurb: "Units, currencies and more, instantly",
+    blurb: "Units, currencies, timestamps, number bases and colors",
   },
   {
     id: "time",
     label: "Time & Focus",
     icon: Clock3,
-    blurb: "Pomodoro sessions and a precise stopwatch",
+    blurb: "Pomodoro sessions, stopwatches and countdowns",
   },
   {
     id: "generators",
     label: "Generators & Dev",
     icon: Wand2,
-    blurb: "Passwords, UUIDs, encoders, JSON and QR codes",
+    blurb: "Passwords, UUIDs, encoders, JSON, hashes, regex and QR codes",
+  },
+  {
+    id: "media",
+    label: "Image & Color",
+    icon: Images,
+    blurb: "Compress, resize, convert images and craft perfect colors",
+  },
+  {
+    id: "business",
+    label: "Business & Money",
+    icon: Briefcase,
+    blurb: "Invoices you can print to PDF and amounts written in words",
   },
   {
     id: "random",
@@ -132,7 +234,89 @@ export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ 
 ];
 
 export const TOOLS: ToolMeta[] = [
-  // Notes & Writing
+  // ---------------- Signature ----------------
+  {
+    id: "submission-checker",
+    name: "File Submission Checker",
+    description: "Stop rejected uploads: check files against submission rules before you send them.",
+    category: "signature",
+    icon: FileCheck2,
+    keywords: "submission assignment application upload check requirements missing file size limit validator",
+    badge: "unique",
+    component: SubmissionCheckerTool,
+  },
+  {
+    id: "file-inspector",
+    name: "File Inspector",
+    description: "See what a file really is — before you open it. Signatures, hashes, archive contents.",
+    category: "signature",
+    icon: ScanSearch,
+    keywords: "file type magic bytes signature inspect fake extension archive zip contents hash sha-256 safety",
+    badge: "unique",
+    component: FileInspectorTool,
+  },
+  {
+    id: "csv-inspector",
+    name: "Spreadsheet Health Inspector",
+    description: "Find broken data before it breaks your import — duplicates, mixed types, bad dates.",
+    category: "signature",
+    icon: Table2,
+    keywords: "csv excel spreadsheet data quality duplicates whitespace mixed types numbers as text clean import",
+    badge: "unique",
+    component: CsvInspectorTool,
+  },
+  {
+    id: "doc-diff",
+    name: "Document Change Explainer",
+    description: "Paste two versions of any text — see exactly what changed, sentence by sentence.",
+    category: "signature",
+    icon: FileDiff,
+    keywords: "diff compare documents versions changes contract policy text difference track",
+    badge: "unique",
+    component: DocDiffTool,
+  },
+  {
+    id: "site-checker",
+    name: "Website Launch Checker",
+    description: "A beginner-friendly pre-launch report: SEO, mobile, security and speed — explained.",
+    category: "signature",
+    icon: Globe,
+    keywords: "website audit launch seo checklist meta description robots sitemap https security headers speed",
+    badge: "unique",
+    component: SiteCheckerTool,
+  },
+  {
+    id: "expiry-calendar",
+    name: "Expiry Calendar",
+    description: "One private calendar for warranties, domains, IDs and subscriptions — with .ics export.",
+    category: "signature",
+    icon: CalendarClock,
+    keywords: "expiry expiration renewal reminder warranty domain subscription insurance deadline calendar ics",
+    badge: "unique",
+    component: ExpiryCalendarTool,
+  },
+  {
+    id: "handover-builder",
+    name: "Handover Pack Builder",
+    description: "Finish like a pro: checklist your deliverables and generate a client-ready README.",
+    category: "signature",
+    icon: PackageCheck,
+    keywords: "handover deliverables freelance project closing checklist readme client handoff",
+    badge: "unique",
+    component: HandoverBuilderTool,
+  },
+  {
+    id: "privacy-scrubber",
+    name: "Privacy Scrubber",
+    description: "Share text safely: auto-detects emails, cards, phones & IDs, then redacts them.",
+    category: "signature",
+    icon: Shield,
+    keywords: "redact sensitive data privacy email phone credit card iban share safe scrubber screenshot text",
+    badge: "unique",
+    component: PrivacyScrubberTool,
+  },
+
+  // ---------------- Notes & Writing ----------------
   {
     id: "notes",
     name: "Quick Notes",
@@ -170,8 +354,48 @@ export const TOOLS: ToolMeta[] = [
     keywords: "lorem ipsum placeholder dummy text filler",
     component: LoremTool,
   },
+  {
+    id: "text-sorter",
+    name: "List Sorter & Dedupe",
+    description: "Sort lines A–Z, by length, shuffle or remove duplicates in one click.",
+    category: "notes",
+    icon: ArrowDownAZ,
+    keywords: "sort lines alphabetically shuffle remove duplicates dedupe list alphabetical order",
+    badge: "new",
+    component: TextSorterTool,
+  },
+  {
+    id: "find-replace",
+    name: "Find & Replace",
+    description: "Batch text edits with regex, whole-word and case options.",
+    category: "notes",
+    icon: Replace,
+    keywords: "find replace search substitute regex batch edit text",
+    badge: "new",
+    component: FindReplaceTool,
+  },
+  {
+    id: "summarizer",
+    name: "Text Summarizer",
+    description: "Condense long articles into key sentences — offline, no AI account.",
+    category: "notes",
+    icon: ScanText,
+    keywords: "summarize summary tldr condense article key points extractive",
+    badge: "new",
+    component: SummarizerTool,
+  },
+  {
+    id: "slug-generator",
+    name: "Slug Generator",
+    description: "Turn any title into kebab-case, snake_case, camelCase and more.",
+    category: "notes",
+    icon: Link2,
+    keywords: "slug url seo kebab snake camel pascal filename naming generator",
+    badge: "new",
+    component: SlugGeneratorTool,
+  },
 
-  // Trackers
+  // ---------------- Trackers ----------------
   {
     id: "expense-tracker",
     name: "Expense Tracker",
@@ -213,7 +437,7 @@ export const TOOLS: ToolMeta[] = [
     component: WaterTool,
   },
 
-  // Calculators
+  // ---------------- Calculators ----------------
   {
     id: "percentage",
     name: "Percentage Calc",
@@ -259,8 +483,38 @@ export const TOOLS: ToolMeta[] = [
     keywords: "date difference days between countdown duration days",
     component: DateDiffTool,
   },
+  {
+    id: "discount",
+    name: "Discount Calculator",
+    description: "Stacked sales, tax and true savings — see the real final price.",
+    category: "calculators",
+    icon: Tag,
+    keywords: "discount sale price off stacked coupon savings tax final",
+    badge: "new",
+    component: DiscountTool,
+  },
+  {
+    id: "vat-gst",
+    name: "VAT / GST Calculator",
+    description: "Add or remove sales tax from any amount, either direction.",
+    category: "calculators",
+    icon: Landmark,
+    keywords: "vat gst sales tax net gross remove add inclusive exclusive",
+    badge: "new",
+    component: VatTool,
+  },
+  {
+    id: "tip",
+    name: "Tip & Split Calc",
+    description: "Bill, tip and splitting between friends — with round-up option.",
+    category: "calculators",
+    icon: Users,
+    keywords: "tip gratuity restaurant bill split share round up dinner",
+    badge: "new",
+    component: TipTool,
+  },
 
-  // Converters
+  // ---------------- Converters ----------------
   {
     id: "unit-converter",
     name: "Unit Converter",
@@ -279,8 +533,38 @@ export const TOOLS: ToolMeta[] = [
     keywords: "currency money usd eur pkr bdt inr exchange rate convert",
     component: CurrencyTool,
   },
+  {
+    id: "timestamp",
+    name: "Timestamp Converter",
+    description: "Unix timestamps to dates and back — with a live clock.",
+    category: "converters",
+    icon: Clock4,
+    keywords: "unix timestamp epoch seconds milliseconds date convert developer",
+    badge: "new",
+    component: TimestampTool,
+  },
+  {
+    id: "base-converter",
+    name: "Number Base Converter",
+    description: "Binary, octal, decimal, hex and base-36 with a byte view.",
+    category: "converters",
+    icon: Binary,
+    keywords: "binary octal decimal hexadecimal hex base convert programmer bin dec",
+    badge: "new",
+    component: BaseConverterTool,
+  },
+  {
+    id: "roman",
+    name: "Roman Numerals",
+    description: "Numbers to Roman numerals and back, both directions validated.",
+    category: "converters",
+    icon: Crown,
+    keywords: "roman numerals MMXXVI convert number latin",
+    badge: "new",
+    component: RomanTool,
+  },
 
-  // Time & Focus
+  // ---------------- Time & Focus ----------------
   {
     id: "pomodoro",
     name: "Pomodoro Timer",
@@ -299,8 +583,18 @@ export const TOOLS: ToolMeta[] = [
     keywords: "stopwatch timer laps splits countdown exercise time",
     component: StopwatchTool,
   },
+  {
+    id: "countdown",
+    name: "Countdown Timer",
+    description: "Egg-timer countdowns with presets, custom minutes and a bell.",
+    category: "time",
+    icon: AlarmClock,
+    keywords: "countdown egg timer alarm kitchen minutes reminder bell",
+    badge: "new",
+    component: CountdownTool,
+  },
 
-  // Generators & Dev
+  // ---------------- Generators & Dev ----------------
   {
     id: "password",
     name: "Password Generator",
@@ -345,11 +639,144 @@ export const TOOLS: ToolMeta[] = [
     category: "generators",
     icon: QrCode,
     keywords: "qr code generator url link scan png download",
-    badge: "new",
     component: QrTool,
   },
+  {
+    id: "hash",
+    name: "Hash Generator",
+    description: "SHA-1/256/384/512 fingerprints of any text, instantly.",
+    category: "generators",
+    icon: Hash,
+    keywords: "hash sha-256 sha-512 checksum fingerprint digest integrity",
+    badge: "new",
+    component: HashTool,
+  },
+  {
+    id: "regex",
+    name: "Regex Tester",
+    description: "Test patterns live with match highlighting and capture groups.",
+    category: "generators",
+    icon: Regex,
+    keywords: "regex regular expression tester matches groups pattern developer",
+    badge: "new",
+    component: RegexTool,
+  },
+  {
+    id: "markdown",
+    name: "Markdown Previewer",
+    description: "Write markdown, see styled output, copy clean HTML.",
+    category: "generators",
+    icon: FileCode2,
+    keywords: "markdown preview readme md html converter editor",
+    badge: "new",
+    component: MarkdownTool,
+  },
 
-  // Random & Fun
+  // ---------------- Image & Color ----------------
+  {
+    id: "image-compressor",
+    name: "Image Compressor",
+    description: "Shrink JPG/WebP photos up to 90% — right on your device.",
+    category: "media",
+    icon: ImageDown,
+    keywords: "compress image optimize webp jpeg tinypng smaller file size photo",
+    badge: "new",
+    component: ImageCompressorTool,
+  },
+  {
+    id: "image-resizer",
+    name: "Image Resizer",
+    description: "Resize to any dimension with ratio lock and quick presets.",
+    category: "media",
+    icon: Scaling,
+    keywords: "resize image dimensions width height scale thumbnail presets",
+    badge: "new",
+    component: ImageResizerTool,
+  },
+  {
+    id: "image-base64",
+    name: "Image to Base64",
+    description: "Data URLs, HTML and CSS snippets for embedding images inline.",
+    category: "media",
+    icon: FileCode2,
+    keywords: "base64 data url embed image inline html css developer",
+    badge: "new",
+    component: ImageBase64Tool,
+  },
+  {
+    id: "favicon-maker",
+    name: "Favicon Generator",
+    description: "One logo in, every favicon size out — 16px to 512px PNGs.",
+    category: "media",
+    icon: Star,
+    keywords: "favicon app icon generator sizes apple touch pwa ico png logo",
+    badge: "new",
+    component: FaviconTool,
+  },
+  {
+    id: "color-converter",
+    name: "Color Converter",
+    description: "HEX ↔ RGB ↔ HSL with tints & shades you can copy.",
+    category: "media",
+    icon: Pipette,
+    keywords: "hex rgb hsl color convert picker tints shades css",
+    badge: "new",
+    component: ColorConverterTool,
+  },
+  {
+    id: "palette",
+    name: "Palette Generator",
+    description: "Harmonious 5-color palettes — save the ones you love.",
+    category: "media",
+    icon: Wand2,
+    keywords: "color palette scheme analogous complementary triadic designer coolors",
+    badge: "new",
+    component: PaletteGeneratorTool,
+  },
+  {
+    id: "contrast",
+    name: "Contrast Checker",
+    description: "WCAG AA/AAA accessibility verdicts for any two colors.",
+    category: "media",
+    icon: Contrast,
+    keywords: "contrast checker wcag accessibility aa aaa ratio color blind",
+    badge: "new",
+    component: ContrastTool,
+  },
+  {
+    id: "gradient",
+    name: "Gradient Maker",
+    description: "Linear & radial CSS gradients with one-click copy.",
+    category: "media",
+    icon: Sparkles,
+    keywords: "css gradient linear radial generator background colors web design",
+    badge: "new",
+    component: GradientTool,
+  },
+
+  // ---------------- Business & Money ----------------
+  {
+    id: "invoice",
+    name: "Invoice Generator",
+    description: "Line items, tax, totals in words — print or save as PDF instantly.",
+    category: "business",
+    icon: Printer,
+    keywords: "invoice generator bill receipt client freelance pdf print tax total",
+    badge: "saved",
+    component: InvoiceTool,
+  },
+  {
+    id: "number-words",
+    name: "Number to Words",
+    description: "Amounts in words for cheques and contracts — 10 currencies.",
+    category: "business",
+    icon: Landmark,
+    keywords: "number to words amount cheque check writing legal contract currency",
+    badge: "new",
+    component: NumberWordsTool,
+  },
+
+  // ---------------- Random & Fun ----------------
   {
     id: "random",
     name: "Random Picker",
