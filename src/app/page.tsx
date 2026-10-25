@@ -1,5 +1,5 @@
-import ToolsHub from "@/components/tools/tools-hub";
+import ZyricApp from "@/components/zyric/zyric-app";
 
 export default function Home() {
-  return <ToolsHub />;
+  return <ZyricApp />;
 }

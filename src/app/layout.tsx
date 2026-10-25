@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_Bengali } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -13,33 +13,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const notoBengali = Noto_Sans_Bengali({
-  variable: "--font-bengali",
-  subsets: ["bengali"],
-  weight: ["400", "500", "600", "700"],
-});
-
 export const metadata: Metadata = {
-  title: "Zyric Tools Hub — Every Free Tool from zyric.tech",
+  title: "zyric.tech — 23 Free Online Tools for Everything",
   description:
-    "A complete directory of free tools in the zyric.tech / Qamarix ecosystem: AyBay income & expense tracker, Hishab business accounting, Quran Words, community platform, video tutorials, and the monthly leaderboard.",
+    "Free online tools in every niche: quick notes, expense & habit trackers, to-do lists, calculators (BMI, loan, percentage, age), unit & currency converters, pomodoro timer, stopwatch, password generator, QR codes, JSON tools and more — all in your browser, no sign-up.",
   keywords: [
-    "zyric.tech",
-    "Qamarix",
-    "free tools",
-    "AyBay",
-    "আয় ব্যয়",
-    "Hishab",
-    "হিসাব",
-    "Quran Words",
-    "কুরআন ওয়ার্ডস",
-    "Bangladesh apps",
-    "free finance app",
+    "free online tools",
+    "web tools",
+    "notes app",
+    "expense tracker",
+    "habit tracker",
+    "todo list",
+    "calculators",
+    "unit converter",
+    "currency converter",
+    "pomodoro timer",
+    "password generator",
+    "QR code generator",
+    "JSON formatter",
+    "zyric",
   ],
   openGraph: {
-    title: "Zyric Tools Hub — Every Free Tool from zyric.tech",
+    title: "zyric.tech — Free Online Tools for Everything",
     description:
-      "All free tools from the Qamarix ecosystem, in one place: apps, features, prices, and links.",
+      "22 free tools in one place: notes, trackers, calculators, converters, generators. Runs locally, no sign-up.",
     type: "website",
   },
 };
@@ -52,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoBengali.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
         <Toaster />
