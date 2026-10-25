@@ -103,3 +103,23 @@ Stage Summary:
 - 75 tools / 12 categories; 9 exclusive signature tools (added Batch File Renamer)
 - Designer-grade shell: display typography, mono kickers, command palette, custom logo, motion-tuned cards, proper footer
 - All client-side, zero uploads; lint/tsc/browser clean
+
+---
+Task ID: 5
+Agent: Main agent (Z.ai)
+Task: Full sticker-brutalist redesign of zyric.tech per user's RESOLVED.app inspiration image — "pure banger design, proper creativity vibe" (replacing the previous dark-emerald AI-generic look)
+
+Work Log:
+- Studied reference: black stage, white nav, giant outlined wordmark, scattered stickers (sticky note / speech bubble / framed sticker), colorful capsule pills, loud copy
+- globals.css: new design system — cream paper (#F3EFE6) + ink (#141414) tokens, Archivo Black display font token (--font-brut), .text-stroke-cream/ink outlined type, .brut-shadow(-sm/-lg) hard offsets, .brut-lift press physics, halftone .dots-light/.dots-dark, marquee/wiggle/float/spin-slow keyframes, yellow ::selection, brutal command-palette skin (.brut-palette), black scrollbar; kept tool-critical utilities (mono-kicker, dot-grid, zyric-ease-demo) and invoice print styles
+- layout.tsx: added Archivo_Black font (--font-brut), refreshed title/metadata voice ("75 Free Online Tools. Zero Servers.")
+- NEW bruts.tsx: CAT_COLORS sticker palette (12 category colors), BADGES chips, Burst (14-point SVG starburst, hydration-safe deterministic points, spin-SVG-only fix), StickyNote/SpeechBubble/FrameSticker/ColorDot primitives, SectionHead
+- NEW home.tsx: Ticker (black mono strip, yellow asterisks), Hero (giant outlined ZYRIC wordmark w/ per-letter spring rise + hover fill, scattered wiggle/float stickers, "TAB HOARDERS, MEET YOUR MATCH!", manifesto, lime/pink-shadowed CTAs, 2x2 stat block, 12 colored category pills), NameMarquee (yellow strip, all 75 tool names CLICKABLE → opens tool, pause on hover), Headliners (9 signature cards, alternating rotations + per-card colored hard shadows + "★ ONLY HERE" chips), Directory (#toolbox: brutal search, counted filter pills, 75 white cards w/ index numbers 001-075 + category/badge chips, Framer layout+popLayout filtering, empty state w/ SURPRISE ME), Footer (black, category dot-links, giant cropped outlined ZYRIC)
+- zyric-app.tsx rebuilt: white brutal nav (sticky, ⌘K + burger), full-screen black mobile menu (giant staggered links + 12 category rows, body scroll-lock), ToolView ("BACK TO THE PILE", category chip, "№ 004/75" index, dark machine-island frame w/ traffic-dot header preserving all 75 tools' native dark styling, prev/next tool nav), keyboard ⌘K/Ctrl+K + "/" shortcuts
+- Command palette: brutalized cmdk (white panel, 3px black border, 10px hard shadow, mono uppercase input, yellow selected row w/ shadow); fixed React-19 cmdk DOM-reorder bug by switching to shouldFilter=false + own deterministic rankTools() scoring (name-prefix 100 > name-substring 80 > keywords 60 > all-words 40 > name-subseq 20 > hay-subseq 10, registry-order tiebreak); ui/command.tsx extended with filter/shouldFilter passthrough props
+- Verified via agent-browser: hero/headliners/directory/footer screenshots (desktop 1440 + mobile 390), palette search "invoice" → Invoice Generator ranked #1, Enter opens tool, BACK TO THE PILE, calculators filter → exactly 8 cards, directory search "password" → 1 card, empty state renders, mobile menu category nav → filter+scroll, no horizontal overflow, zero console/page errors, lint exit 0, HTTP 200
+
+Stage Summary:
+- Complete visual identity swap: RESOLVED-style sticker brutalism (black/cream/ink + 12-color sticker palette, Archivo Black + Space Grotesk + Geist Mono, hard shadows, outlined mega-type)
+- All 75 tools intact and natively styled inside dark "machine islands"; signature section, marquee index, filters, palette, mobile menu all functional
+- Deliverable: single-page app at / (page.tsx → ZyricApp), screenshots in /home/z/my-project/download/

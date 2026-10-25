@@ -1,29 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Search,
-  Menu,
-  X,
   ArrowLeft,
   ArrowRight,
-  ShieldCheck,
-  Zap,
-  HardDrive,
-  Gem,
   Command as CommandIcon,
-  Shuffle,
+  Dices,
+  Menu,
+  X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   CommandDialog,
   CommandEmpty,
@@ -33,813 +19,561 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { CATEGORIES, TOOLS, TOOL_COUNT, searchTools, type ToolMeta } from "./registry";
-import { inputCls } from "./hooks";
+import { CATEGORIES, TOOLS, TOOL_COUNT, type ToolMeta } from "./registry";
+import { CAT_COLORS, chipBase } from "./bruts";
+import { Home, Ticker } from "./home";
 
-const BADGE_STYLE: Record<string, string> = {
-  new: "border-cyan-500/40 bg-cyan-500/10 text-cyan-300",
-  local: "border-teal-500/40 bg-teal-500/10 text-teal-300",
-  saved: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-  unique: "border-amber-500/40 bg-amber-500/10 text-amber-300",
-};
+/* ==========================================================================
+   ZYRIC APP — brutal chrome around 75 dark machine islands
+   ========================================================================== */
 
-const BADGE_TEXT: Record<string, string> = {
-  new: "New",
-  local: "Private",
-  saved: "Auto-saves",
-  unique: "Signature",
-};
-
-/* ------------------------------- Brand mark -------------------------------- */
-
-function LogoMark({ className = "" }: { className?: string }) {
-  return (
-    <span
-      className={`relative flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 text-zinc-950 shadow-[0_0_18px_rgba(16,185,129,0.3)] ${className}`}
-    >
-      <svg viewBox="0 0 24 24" fill="none" className="h-[58%] w-[58%]" aria-hidden>
-        <path
-          d="M12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7"
-          stroke="currentColor"
-          strokeWidth="2.4"
-          strokeLinecap="round"
-        />
-      </svg>
-    </span>
-  );
+/**
+ * Deterministic tool scoring — Zyric ranks results itself (cmdk's DOM reordering
+ * is unreliable under React 19, so we render a pre-ranked flat list instead).
+ * Order: name-prefix > name-substring > keyword/substring > all-words > subsequence.
+ */
+function scoreTool(t: ToolMeta, raw: string): number {
+  const s = raw.toLowerCase().trim();
+  if (!s) return 1;
+  const name = t.name.toLowerCase();
+  const hay = `${t.name} ${t.keywords} ${t.category}`.toLowerCase();
+  if (name.startsWith(s)) return 100;
+  if (name.includes(s)) return 80;
+  if (hay.includes(s)) return 60;
+  const words = s.split(/\s+/);
+  if (words.length > 1 && words.every((w) => hay.includes(w))) return 40;
+  let i = 0;
+  for (let c = 0; c < name.length && i < s.length; c++) {
+    if (name[c] === s[i]) i++;
+  }
+  if (i === s.length) return 20;
+  i = 0;
+  for (let c = 0; c < hay.length && i < s.length; c++) {
+    if (hay[c] === s[i]) i++;
+  }
+  return i === s.length ? 10 : 0;
 }
 
-/* -------------------------------- SearchBox -------------------------------- */
+function rankTools(query: string): ToolMeta[] {
+  return TOOLS.map((t, i) => ({ t, score: scoreTool(t, query), i }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || a.i - b.i)
+    .map((x) => x.t);
+}
 
-function SearchBox({
-  value,
-  onChange,
-  autoFocus = false,
-  placeholder = `Search ${TOOL_COUNT} tools…`,
-  inputRef,
-  onKeyDown,
+function jumpTo(id: string) {
+  window.setTimeout(() => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 60);
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ---------------------------------- Nav ----------------------------------- */
+
+function Nav({
+  onHome,
+  onOpenPalette,
+  onOpenMenu,
+  onSurprise,
 }: {
-  value: string;
-  onChange: (v: string) => void;
-  autoFocus?: boolean;
-  placeholder?: string;
-  inputRef?: React.RefObject<HTMLInputElement | null>;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onHome: () => void;
+  onOpenPalette: () => void;
+  onOpenMenu: () => void;
+  onSurprise: () => void;
 }) {
   return (
-    <div className="relative w-full">
-      <Search
-        className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
-        aria-hidden
-      />
-      <Input
-        ref={inputRef}
-        type="search"
-        value={value}
-        autoFocus={autoFocus}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
-        placeholder={placeholder}
-        aria-label="Search tools"
-        className={`h-11 rounded-xl border-zinc-800 bg-zinc-900/70 pl-10 pr-10 text-sm text-zinc-100 placeholder:text-zinc-500 focus-visible:border-emerald-500/60 focus-visible:ring-emerald-500/25 ${inputCls}`}
-      />
-      {value && (
+    <header className="sticky top-0 z-40 border-b-[3px] border-[#141414] bg-white">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
-          onClick={() => onChange("")}
-          aria-label="Clear search"
-          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+          onClick={onHome}
+          className="flex items-center gap-2"
+          aria-label="Zyric home"
         >
-          <X className="h-4 w-4" aria-hidden />
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* --------------------------------- Cards ----------------------------------- */
-
-function ToolCard({
-  tool,
-  onOpen,
-  index,
-  accent = false,
-}: {
-  tool: ToolMeta;
-  onOpen: () => void;
-  index: number;
-  accent?: boolean;
-}) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onOpen}
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28, delay: Math.min(index * 0.035, 0.3) }}
-      whileHover={{ y: -3 }}
-      className={`group relative flex flex-col items-start gap-3 overflow-hidden rounded-2xl border p-5 text-left transition-colors ${
-        accent
-          ? "border-amber-500/15 bg-gradient-to-b from-amber-500/[0.06] to-zinc-900/40 hover:border-amber-500/40"
-          : "border-zinc-800/80 bg-gradient-to-b from-zinc-900/60 to-zinc-900/25 hover:border-emerald-500/40"
-      }`}
-    >
-      <span
-        aria-hidden
-        className={`pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-          accent ? "via-amber-400/70" : "via-emerald-400/70"
-        }`}
-      />
-      <div className="flex w-full items-start justify-between">
-        <span
-          className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 group-hover:scale-105 ${
-            accent
-              ? "border-amber-500/25 bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20"
-              : "border-zinc-700/60 bg-zinc-800/70 text-zinc-300 group-hover:border-emerald-500/40 group-hover:bg-emerald-500/10 group-hover:text-emerald-300"
-          }`}
-        >
-          <tool.icon className="h-[18px] w-[18px]" aria-hidden />
-        </span>
-        {tool.badge && (
-          <span
-            className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${BADGE_STYLE[tool.badge]}`}
-          >
-            {BADGE_TEXT[tool.badge]}
+          <span className="font-brut text-[26px] uppercase leading-none tracking-tight text-[#141414]">
+            ZYRIC
           </span>
-        )}
+          <span
+            className={`${chipBase} rotate-2`}
+            style={{ background: "#FFD43B" }}
+          >
+            {TOOL_COUNT} TOOLS
+          </span>
+        </button>
+
+        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+          <button
+            type="button"
+            onClick={() => jumpTo("headliners")}
+            className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#FF7A3D] hover:decoration-[3px]"
+          >
+            The Headliners
+          </button>
+          <button
+            type="button"
+            onClick={() => jumpTo("toolbox")}
+            className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#C6F24E] hover:decoration-[3px]"
+          >
+            The Toolbox
+          </button>
+          <button
+            type="button"
+            onClick={onSurprise}
+            className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#FF9DE2] hover:decoration-[3px]"
+          >
+            <Dices className="h-3.5 w-3.5" strokeWidth={2.5} />
+            Surprise Me
+          </button>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenPalette}
+            className="brut-lift brut-shadow-xs hidden items-center gap-2 border-2 border-[#141414] bg-[#141414] px-3.5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#F3EFE6] hover:bg-[#FFD43B] hover:text-[#141414] sm:inline-flex"
+          >
+            <CommandIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+            K · SEARCH
+          </button>
+          <button
+            type="button"
+            onClick={onOpenMenu}
+            aria-label="Open menu"
+            className="brut-lift brut-shadow-xs border-2 border-[#141414] bg-[#FFD43B] p-2 md:hidden"
+          >
+            <Menu className="h-5 w-5 text-[#141414]" strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
-      <div>
-        <h3 className={`font-semibold transition-colors ${accent ? "text-amber-100 group-hover:text-amber-300" : "text-zinc-100 group-hover:text-emerald-300"}`}>
-          {tool.name}
-        </h3>
-        <p className="mt-1 text-sm leading-relaxed text-zinc-400">{tool.description}</p>
-      </div>
-      <span
-        className={`mt-auto inline-flex translate-x-0 items-center gap-1 text-xs font-medium transition-all group-hover:translate-x-0.5 ${
-          accent ? "text-amber-400" : "text-emerald-400"
-        }`}
-      >
-        Open <ArrowRight className="h-3 w-3" aria-hidden />
-      </span>
-    </motion.button>
+    </header>
   );
 }
 
-function SectionHeader({
-  icon: Icon,
-  kicker,
-  title,
-  blurb,
-  count,
-  accent = false,
+/* ------------------------------ Mobile menu -------------------------------- */
+
+function MobileMenu({
+  open,
+  onClose,
+  onHome,
+  onSurprise,
+  onCatJump,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
-  kicker: string;
-  title: string;
-  blurb: string;
-  count?: number;
-  accent?: boolean;
+  open: boolean;
+  onClose: () => void;
+  onHome: () => void;
+  onSurprise: () => void;
+  onCatJump: (c: (typeof CATEGORIES)[number]["id"]) => void;
 }) {
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  const act = (fn: () => void) => () => {
+    onClose();
+    window.setTimeout(fn, 80);
+  };
+
   return (
-    <div className="mb-4 flex items-center gap-3">
-      <span
-        className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
-          accent
-            ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-            : "border-zinc-800 bg-zinc-900 text-emerald-400"
-        }`}
-      >
-        <Icon className="h-[18px] w-[18px]" aria-hidden />
-      </span>
-      <div className="min-w-0">
-        <p className={`mono-kicker ${accent ? "text-amber-500/80" : "text-zinc-600"}`}>{kicker}</p>
-        <h2 className="font-display text-lg font-semibold tracking-tight text-zinc-50">{title}</h2>
-        <p className="hidden text-xs text-zinc-500 sm:block">{blurb}</p>
-      </div>
-      {count !== undefined && (
-        <span
-          className={`ml-auto shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-xs ${
-            accent ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : "border-zinc-800 bg-zinc-900 text-zinc-400"
-          }`}
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-50 flex flex-col bg-[#141414] text-[#F3EFE6]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
         >
-          {count}
-        </span>
-      )}
-    </div>
+          <div className="dots-light absolute inset-0" aria-hidden="true" />
+          <div className="relative flex h-16 items-center justify-between border-b-[3px] border-[#F3EFE6]/15 px-4 sm:px-6">
+            <button
+              type="button"
+              onClick={act(onHome)}
+              className="font-brut text-2xl uppercase tracking-tight"
+            >
+              ZYRIC
+              <span className="ml-2 inline-block rotate-2 border-2 border-[#141414] bg-[#FFD43B] px-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-[#141414]">
+                {TOOL_COUNT} TOOLS
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close menu"
+              className="border-2 border-[#F3EFE6]/40 p-2 text-[#F3EFE6]"
+            >
+              <X className="h-5 w-5" strokeWidth={2.5} />
+            </button>
+          </div>
+
+          <nav
+            className="relative flex-1 overflow-y-auto px-4 py-8 sm:px-6"
+            aria-label="Mobile"
+          >
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
+              }}
+              className="flex flex-col gap-5"
+            >
+              {[
+                { label: "The Headliners", color: "#FFD43B", fn: () => jumpTo("headliners") },
+                { label: "The Whole Toolbox", color: "#F3EFE6", fn: () => jumpTo("toolbox") },
+                { label: "Surprise Me", color: "#FF9DE2", fn: onSurprise },
+              ].map((l) => (
+                <motion.button
+                  key={l.label}
+                  type="button"
+                  variants={{
+                    hidden: { x: -28, opacity: 0 },
+                    show: { x: 0, opacity: 1, transition: { type: "spring", stiffness: 220, damping: 20 } },
+                  }}
+                  onClick={act(() => {
+                    onClose();
+                    window.setTimeout(l.fn, 120);
+                  })}
+                  className="text-left font-brut text-4xl uppercase leading-none"
+                  style={{ color: l.color }}
+                >
+                  {l.label}
+                </motion.button>
+              ))}
+
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 16 },
+                  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 200, damping: 20 } },
+                }}
+                className="mt-6 grid grid-cols-1 gap-2.5 border-t-2 border-[#F3EFE6]/15 pt-6 sm:grid-cols-2"
+              >
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={act(() => onCatJump(c.id))}
+                    className="flex items-center gap-3 border-2 border-[#F3EFE6]/15 px-3 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#F3EFE6]/80 hover:border-[#F3EFE6]/40"
+                  >
+                    <span
+                      className="inline-block h-2.5 w-2.5 shrink-0 border border-[#141414]"
+                      style={{ background: CAT_COLORS[c.id] }}
+                    />
+                    {c.label}
+                  </button>
+                ))}
+              </motion.div>
+            </motion.div>
+          </nav>
+
+          <div className="relative border-t-[3px] border-[#F3EFE6]/15 px-4 py-3 font-mono text-[9px] uppercase tracking-[0.18em] text-[#F3EFE6]/45 sm:px-6">
+            NO UPLOADS · NO SIGN-UPS · RUNS ON YOUR DEVICE
+          </div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }
 
-/* --------------------------------- Home ------------------------------------ */
+/* ---------------------------- Command palette ------------------------------ */
 
-function HomeView({
-  onOpen,
-  query,
-  setQuery,
-  onOpenPalette,
+function PaletteItems({
+  results,
+  onOpenTool,
+  close,
 }: {
-  onOpen: (id: string) => void;
-  query: string;
-  setQuery: (v: string) => void;
-  onOpenPalette: () => void;
+  results: ToolMeta[];
+  onOpenTool: (id: string) => void;
+  close: () => void;
 }) {
-  const results = useMemo(() => searchTools(query), [query]);
-  const searching = query.trim().length > 0;
-  const sigTools = useMemo(() => TOOLS.filter((t) => t.category === "signature"), []);
-
+  const pick = (t: ToolMeta) => () => {
+    close();
+    onOpenTool(t.id);
+  };
   return (
-    <div className="space-y-14 pb-8">
-      {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-zinc-800/70 bg-zinc-900/20 px-6 py-14 sm:px-10 sm:py-16">
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-[-200px] h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-emerald-500/[0.13] blur-[120px]" />
-          <div className="absolute right-[-120px] top-[80px] h-[240px] w-[240px] rounded-full bg-teal-500/[0.09] blur-[90px]" />
-          <div className="dot-grid absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_70%_65%_at_50%_0%,black_25%,transparent_100%)]" />
-        </div>
-
-        <div className="relative mx-auto max-w-3xl text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mono-kicker text-emerald-400/90"
-          >
-            {"// "}
-            {TOOL_COUNT} tools · 0 uploads · 0 accounts
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.06 }}
-            className="mt-4 font-display text-4xl font-bold leading-[1.08] tracking-tight text-zinc-50 sm:text-6xl"
-          >
-            Every tool you need.
-            <br />
-            <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
-              Nothing you don&rsquo;t.
+    <CommandGroup
+      heading={results.length === TOOLS.length ? "Browse everything — type to filter" : `Top matches · ${results.length}`}
+    >
+      {results.map((t) => {
+        const Icon = t.icon;
+        const isSig = t.category === "signature";
+        return (
+          <CommandItem key={t.id} value={`${t.name} ${t.keywords}`} onSelect={pick(t)}>
+            <span
+              className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-[#141414]"
+              style={{ background: CAT_COLORS[t.category] }}
+            >
+              <Icon className="h-3.5 w-3.5 text-[#141414]" strokeWidth={2.5} />
             </span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12 }}
-            className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base"
-          >
-            A hand-built collection of everyday tools — notes, trackers, calculators, CSS
-            generators, file checkers and a set of signature problem-solvers you won&rsquo;t
-            find anywhere else. Everything runs right here in your browser.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18 }}
-            className="mx-auto mt-8 max-w-xl"
-          >
-            <SearchBox
-              value={query}
-              onChange={setQuery}
-              placeholder={`Search ${TOOL_COUNT} tools… try “expense”, “cron”, “qr”…`}
-            />
-            <div className="mt-2.5 flex items-center justify-center gap-4 text-[11px] text-zinc-600">
-              <span>
-                Press{" "}
-                <button
-                  type="button"
-                  onClick={onOpenPalette}
-                  className="rounded border border-zinc-700 bg-zinc-800/80 px-1.5 py-0.5 font-mono text-[10px] text-zinc-300 transition-colors hover:border-emerald-500/50 hover:text-emerald-300"
-                >
-                  ⌘K
-                </button>{" "}
-                for the launcher
-              </span>
-              <span aria-hidden>·</span>
-              <span>
-                or{" "}
-                <kbd className="rounded border border-zinc-700 bg-zinc-800/80 px-1.5 py-0.5 font-mono text-[10px] text-zinc-300">
-                  /
-                </kbd>{" "}
-                to search
-              </span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.26 }}
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-500"
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" aria-hidden /> 100% private — data never leaves your device
+            <span className={isSig ? "font-bold" : undefined}>{t.name}</span>
+            <span className="ml-auto font-mono text-[9px] uppercase tracking-[0.12em] text-[#141414]/45">
+              {isSig ? "★ signature" : t.category}
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Zap className="h-3.5 w-3.5 text-amber-400" aria-hidden /> Instant — no page reloads
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <HardDrive className="h-3.5 w-3.5 text-teal-400" aria-hidden /> Saves locally on this browser
-            </span>
-          </motion.div>
-
-          {/* Stats strip */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.32 }}
-            className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-800/60 sm:grid-cols-4"
-          >
-            {[
-              { v: String(TOOL_COUNT), l: "tools & counting" },
-              { v: String(CATEGORIES.length), l: "categories" },
-              { v: "0", l: "files uploaded" },
-              { v: "$0", l: "forever" },
-            ].map((s) => (
-              <div key={s.l} className="bg-zinc-950/80 px-4 py-4">
-                <p className="font-display text-2xl font-bold text-zinc-50">{s.v}</p>
-                <p className="mono-kicker mt-0.5 text-zinc-600">{s.l}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Search results or categories */}
-      {searching ? (
-        <section aria-label="Search results">
-          <p className="mb-4 text-sm text-zinc-400">
-            {results.length} tool{results.length !== 1 ? "s" : ""} matching{" "}
-            <span className="font-semibold text-emerald-400">“{query.trim()}”</span>
-          </p>
-          {results.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {results.map((t, i) => (
-                <ToolCard key={t.id} tool={t} index={i} accent={t.category === "signature"} onOpen={() => onOpen(t.id)} />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 px-6 py-14 text-center text-sm text-zinc-500">
-              Nothing found for &ldquo;{query.trim()}&rdquo;. Try &ldquo;notes&rdquo;, &ldquo;bmi&rdquo;,
-              &ldquo;timer&rdquo; or &ldquo;qr&rdquo;.
-            </p>
-          )}
-        </section>
-      ) : (
-        <>
-          {/* Signature showcase */}
-          <section aria-labelledby="sig-showcase">
-            <SectionHeader
-              icon={Gem}
-              kicker="signature — exclusive to zyric"
-              title="Signature tools"
-              blurb="Built in-house to solve problems no other free tool handles properly"
-              count={sigTools.length}
-              accent
-            />
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {sigTools.map((t, i) => (
-                <ToolCard key={t.id} tool={t} index={i} accent onOpen={() => onOpen(t.id)} />
-              ))}
-            </div>
-          </section>
-
-          {CATEGORIES.filter((cat) => cat.id !== "signature").map((cat) => {
-            const tools = TOOLS.filter((t) => t.category === cat.id);
-            return (
-              <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
-                <SectionHeader
-                  icon={cat.icon}
-                  kicker={cat.id}
-                  title={cat.label}
-                  blurb={cat.blurb}
-                  count={tools.length}
-                />
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {tools.map((t, i) => (
-                    <ToolCard key={t.id} tool={t} index={i} onOpen={() => onOpen(t.id)} />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </>
-      )}
-    </div>
+          </CommandItem>
+        );
+      })}
+    </CommandGroup>
   );
 }
 
 /* -------------------------------- Tool view -------------------------------- */
 
-function ToolView({ tool, onBack }: { tool: ToolMeta; onBack: () => void }) {
-  const Tool = tool.component;
-  return (
-    <motion.div
-      key={tool.id}
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
-      className="pb-10"
-    >
-      <button
-        type="button"
-        onClick={onBack}
-        className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/60 px-3.5 py-1.5 text-xs text-zinc-400 transition-colors hover:border-emerald-500/40 hover:text-emerald-300"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> All tools
-      </button>
-      <div className="mb-7 flex items-start gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/15 to-teal-500/10 text-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.15)]">
-          <tool.icon className="h-5 w-5" aria-hidden />
-        </span>
-        <div className="min-w-0">
-          <h1 className="flex flex-wrap items-center gap-2.5 font-display text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
-            {tool.name}
-            {tool.badge && (
-              <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${BADGE_STYLE[tool.badge]}`}>
-                {BADGE_TEXT[tool.badge]}
-              </span>
-            )}
-          </h1>
-          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-zinc-400">
-            {tool.description}{" "}
-            <span className="text-zinc-500">Runs fully in your browser — nothing is uploaded.</span>
-          </p>
-        </div>
-      </div>
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 sm:p-7">
-        <Tool />
-      </div>
-    </motion.div>
-  );
-}
-
-/* -------------------------------- Sidebar ---------------------------------- */
-
-function SidebarNav({
-  activeId,
-  onOpen,
-  query,
-  setQuery,
-}: {
-  activeId: string | null;
-  onOpen: (id: string) => void;
-  query: string;
-  setQuery: (v: string) => void;
-}) {
-  const results = useMemo(() => searchTools(query), [query]);
-  const searching = query.trim().length > 0;
-
-  const itemCls = (active: boolean) =>
-    `relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
-      active
-        ? "bg-emerald-500/10 font-medium text-emerald-300"
-        : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100"
-    }`;
-
-  const renderItem = (t: ToolMeta) => (
-    <button key={t.id} type="button" onClick={() => onOpen(t.id)} aria-current={activeId === t.id ? "page" : undefined} className={itemCls(activeId === t.id)}>
-      {activeId === t.id && (
-        <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-emerald-400" aria-hidden />
-      )}
-      <t.icon className="h-4 w-4 shrink-0" aria-hidden />
-      <span className="truncate">{t.name}</span>
-    </button>
-  );
-
-  return (
-    <nav aria-label="Tool categories" className="flex h-full flex-col gap-5">
-      <div className="px-1">
-        <SearchBox value={query} onChange={setQuery} placeholder="Search…" />
-      </div>
-      <ScrollArea className="flex-1 px-1">
-        <div className="space-y-5 pb-4">
-          {searching ? (
-            <div className="space-y-1">
-              <p className="mono-kicker px-2 text-zinc-600">results ({results.length})</p>
-              {results.map(renderItem)}
-            </div>
-          ) : (
-            CATEGORIES.map((cat) => {
-              const tools = TOOLS.filter((t) => t.category === cat.id);
-              return (
-                <div key={cat.id}>
-                  <p className="mono-kicker mb-1.5 flex items-center justify-between px-2 text-zinc-600">
-                    <span className="flex items-center gap-2">
-                      <cat.icon className="h-3 w-3" aria-hidden />
-                      {cat.label}
-                    </span>
-                    <span className="font-mono">{tools.length}</span>
-                  </p>
-                  <div className="space-y-0.5">{tools.map(renderItem)}</div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </ScrollArea>
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3.5">
-        <p className="mono-kicker flex items-center gap-1.5 text-emerald-500/90">
-          <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> local-first
-        </p>
-        <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
-          Notes, entries and settings are saved in this browser only — never uploaded.
-        </p>
-      </div>
-    </nav>
-  );
-}
-
-/* ----------------------------- Command palette ------------------------------ */
-
-function CommandPalette({
-  open,
-  setOpen,
+function ToolView({
+  tool,
+  onBack,
   onOpenTool,
 }: {
-  open: boolean;
-  setOpen: (o: boolean) => void;
+  tool: ToolMeta;
+  onBack: () => void;
   onOpenTool: (id: string) => void;
 }) {
-  const [q, setQ] = useState("");
-  const results = useMemo(() => searchTools(q), [q]);
-  const sig = results.filter((t) => t.category === "signature");
-  const rest = results.filter((t) => t.category !== "signature");
-
-  const pick = (id: string) => {
-    setOpen(false);
-    setQ("");
-    onOpenTool(id);
-  };
+  const idx = TOOLS.findIndex((t) => t.id === tool.id);
+  const n = TOOLS.length;
+  const prev = TOOLS[(idx - 1 + n) % n];
+  const next = TOOLS[(idx + 1) % n];
+  const catLabel = CATEGORIES.find((c) => c.id === tool.category)?.label ?? "";
+  const Tool = tool.component;
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} className="border-zinc-800 bg-zinc-950 text-zinc-100">
-      <CommandInput
-        placeholder={`Search ${TOOL_COUNT} tools…`}
-        value={q}
-        onValueChange={setQ}
-        className="text-zinc-100 placeholder:text-zinc-500"
-      />
-      <CommandList>
-        <CommandEmpty className="py-8 text-center text-sm text-zinc-500">
-          No tool matches “{q}”.
-        </CommandEmpty>
-        {sig.length > 0 && (
-          <CommandGroup heading="Signature tools">
-            {sig.map((t) => (
-              <CommandItem
-                key={t.id}
-                value={`${t.name} ${t.keywords}`}
-                onSelect={() => pick(t.id)}
-                className="gap-3 rounded-lg text-zinc-200 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:text-emerald-300"
-              >
-                <t.icon className="h-4 w-4 text-amber-400" aria-hidden />
-                <span>{t.name}</span>
-                <span className="ml-auto text-[10px] uppercase tracking-wider text-amber-500/80">signature</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )}
-        {rest.length > 0 && (
-          <CommandGroup heading="All tools">
-            {rest.map((t) => (
-              <CommandItem
-                key={t.id}
-                value={`${t.name} ${t.keywords}`}
-                onSelect={() => pick(t.id)}
-                className="gap-3 rounded-lg text-zinc-200 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:text-emerald-300"
-              >
-                <t.icon className="h-4 w-4 text-emerald-400" aria-hidden />
-                <span>{t.name}</span>
-                <span className="ml-auto hidden text-[11px] text-zinc-600 sm:block">{t.description.slice(0, 40)}…</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )}
-        <CommandSeparator />
-        <CommandGroup heading="Actions">
-          <CommandItem
-            value="surprise me random tool"
-            onSelect={() => pick(TOOLS[Math.floor(Math.random() * TOOLS.length)].id)}
-            className="gap-3 rounded-lg text-zinc-200 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:text-emerald-300"
-          >
-            <Shuffle className="h-4 w-4 text-teal-400" aria-hidden /> Surprise me — open a random tool
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </CommandDialog>
+    <motion.main
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -14 }}
+      transition={{ duration: 0.24, ease: "easeOut" }}
+      className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8"
+    >
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="brut-lift brut-shadow-sm inline-flex items-center gap-2 border-2 border-[#141414] bg-white px-4 py-2.5 font-brut text-xs uppercase text-[#141414]"
+        >
+          <ArrowLeft className="h-4 w-4" strokeWidth={3} />
+          BACK TO THE PILE
+        </button>
+        <div className="flex items-center gap-3">
+          <span className={chipBase} style={{ background: CAT_COLORS[tool.category] }}>
+            {catLabel}
+          </span>
+          <span className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#141414]/50">
+            № {String(idx + 1).padStart(3, "0")} / {n}
+          </span>
+        </div>
+      </div>
+
+      <h1 className="font-brut text-3xl uppercase leading-tight text-[#141414] sm:text-4xl">
+        {tool.name}
+      </h1>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#141414]/70">
+        {tool.description}
+      </p>
+
+      {/* The machine island — tools keep their native dark styling */}
+      <div className="brut-shadow-lg mt-7 border-[3px] border-[#141414] bg-zinc-950 text-zinc-100">
+        <div className="flex items-center justify-between border-b-2 border-zinc-800 px-4 py-2.5">
+          <span className="mono-kicker text-zinc-500">the machine — runs on your device</span>
+          <span className="flex gap-1.5" aria-hidden="true">
+            <span className="h-2.5 w-2.5 border border-black bg-[#FF8A7A]" />
+            <span className="h-2.5 w-2.5 border border-black bg-[#FFD43B]" />
+            <span className="h-2.5 w-2.5 border border-black bg-[#5EE39A]" />
+          </span>
+        </div>
+        <div className="p-4 sm:p-6">
+          <Tool />
+        </div>
+      </div>
+
+      <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => onOpenTool(prev.id)}
+          className="group inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#141414]/60 hover:text-[#141414]"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
+          {prev.name}
+        </button>
+        <button
+          type="button"
+          onClick={() => onOpenTool(next.id)}
+          className="group inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#141414]/60 hover:text-[#141414]"
+        >
+          {next.name}
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+        </button>
+      </div>
+    </motion.main>
   );
 }
 
-/* ---------------------------------- App ------------------------------------ */
-
-const POPULAR = ["notes", "expense-tracker", "submission-checker", "password", "qr", "invoice"];
+/* --------------------------------- App ------------------------------------- */
 
 export default function ZyricApp() {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeToolId, setActiveToolId] = useState<string | null>(null);
+  const [cat, setCat] = useState<"all" | (typeof CATEGORIES)[number]["id"]>("all");
   const [query, setQuery] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteMounted, setPaletteMounted] = useState(false);
-  const year = new Date().getFullYear();
+  const [paletteQuery, setPaletteQuery] = useState("");
 
-  const active = useMemo(() => TOOLS.find((t) => t.id === activeId) ?? null, [activeId]);
+  const paletteResults = useMemo(() => rankTools(paletteQuery), [paletteQuery]);
 
-  // Mount the palette lazily (keeps SSR output clean); ⌘K / Ctrl+K toggles it, "/" too
-  const togglePalette = () => {
+  const openPalette = useCallback(() => {
     setPaletteMounted(true);
-    setPaletteOpen((o) => !o);
-  };
+    setPaletteQuery("");
+    setPaletteOpen(true);
+  }, []);
 
+  const openTool = useCallback((id: string) => {
+    setActiveToolId(id);
+    setMenuOpen(false);
+    scrollToTop();
+  }, []);
+
+  const backToPile = useCallback(() => {
+    setActiveToolId(null);
+    jumpTo("toolbox");
+  }, []);
+
+  const goHome = useCallback(() => {
+    setActiveToolId(null);
+    setMenuOpen(false);
+    scrollToTop();
+  }, []);
+
+  const surprise = useCallback(() => {
+    const pool = TOOLS.filter((t) => t.id !== activeToolId);
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pick) openTool(pick.id);
+  }, [activeToolId, openTool]);
+
+  const catJump = useCallback(
+    (c: (typeof CATEGORIES)[number]["id"]) => {
+      setActiveToolId(null);
+      setCat(c);
+      setMenuOpen(false);
+      jumpTo("toolbox");
+    },
+    []
+  );
+
+  /* Keyboard: Cmd/Ctrl+K anywhere, "/" when not typing */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName;
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setPaletteMounted(true);
         setPaletteOpen((o) => !o);
-      } else if (e.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(tag)) {
-        e.preventDefault();
-        setPaletteMounted(true);
-        setPaletteOpen(true);
+        return;
+      }
+      if (e.key === "/" && !paletteOpen) {
+        const el = e.target as HTMLElement | null;
+        const typing =
+          el &&
+          (el.tagName === "INPUT" ||
+            el.tagName === "TEXTAREA" ||
+            el.tagName === "SELECT" ||
+            el.isContentEditable);
+        if (!typing) {
+          e.preventDefault();
+          setPaletteMounted(true);
+          setPaletteOpen(true);
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [paletteOpen]);
 
-  const openTool = (id: string) => {
-    setActiveId(id);
-    setMobileOpen(false);
-    setQuery("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const backHome = () => {
-    setActiveId(null);
-    window.scrollTo({ top: 0 });
-  };
+  const activeTool = activeToolId ? TOOLS.find((t) => t.id === activeToolId) ?? null : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
-      {paletteMounted && <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} onOpenTool={openTool} />}
+    <div className="flex min-h-screen flex-col bg-[#F3EFE6] text-[#141414]">
+      <Ticker />
+      <Nav
+        onHome={goHome}
+        onOpenPalette={openPalette}
+        onOpenMenu={() => setMenuOpen(true)}
+        onSurprise={surprise}
+      />
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-zinc-800/70 bg-zinc-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="Open navigation menu"
-                className="shrink-0 border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800 hover:text-white lg:hidden"
-              >
-                <Menu className="h-5 w-5" aria-hidden />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] border-zinc-800 bg-zinc-950 p-4 text-zinc-100">
-              <SheetTitle className="sr-only">Navigation</SheetTitle>
-              <SidebarNav activeId={activeId} onOpen={openTool} query={query} setQuery={setQuery} />
-            </SheetContent>
-          </Sheet>
-
-          <button type="button" onClick={backHome} className="flex items-center gap-2.5" aria-label="zyric.tech — home">
-            <LogoMark className="h-8 w-8" />
-            <span className="flex flex-col text-left leading-tight">
-              <span className="font-display text-sm font-bold tracking-tight text-zinc-50">
-                zyric<span className="text-emerald-400">.tech</span>
-              </span>
-              <span className="mono-kicker text-zinc-600">free tools, zero uploads</span>
-            </span>
-          </button>
-
-          {/* Launcher (desktop) */}
-          <button
-            type="button"
-            onClick={togglePalette}
-            className="mx-auto hidden h-9 w-full max-w-sm items-center gap-2.5 rounded-full border border-zinc-800 bg-zinc-900/60 px-4 text-sm text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-400 lg:flex"
-            aria-label="Open tool launcher"
+      <AnimatePresence mode="wait">
+        {activeTool ? (
+          <ToolView
+            key={`tool-${activeTool.id}`}
+            tool={activeTool}
+            onBack={backToPile}
+            onOpenTool={openTool}
+          />
+        ) : (
+          <motion.div
+            key="home"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="flex-1"
           >
-            <Search className="h-3.5 w-3.5" aria-hidden />
-            <span className="flex-1 text-left">Search {TOOL_COUNT} tools…</span>
-            <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">⌘K</kbd>
-          </button>
+            <Home
+              onOpenTool={openTool}
+              onSurprise={surprise}
+              onOpenPalette={openPalette}
+              cat={cat}
+              setCat={setCat}
+              query={query}
+              setQuery={setQuery}
+              onCatJump={catJump}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div className="ml-auto flex items-center gap-2 lg:ml-0">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={togglePalette}
-              aria-label="Open tool launcher"
-              className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-500 hover:text-white lg:hidden"
-            >
-              <Search className="h-4 w-4" aria-hidden />
-            </Button>
-            <Button
-              asChild
-              size="sm"
-              className="hidden bg-emerald-500 font-medium text-zinc-950 shadow-[0_0_16px_rgba(16,185,129,0.25)] hover:bg-emerald-400 sm:inline-flex"
-            >
-              <button type="button" onClick={backHome}>
-                {active ? "All tools" : `Browse ${TOOL_COUNT}`}
-              </button>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onHome={goHome}
+        onSurprise={surprise}
+        onCatJump={catJump}
+      />
 
-      {/* Body */}
-      <div className="mx-auto flex w-full max-w-7xl flex-1 gap-8 px-4 sm:px-6 lg:px-8">
-        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 py-6 lg:block">
-          <SidebarNav activeId={activeId} onOpen={openTool} query={query} setQuery={setQuery} />
-        </aside>
-
-        <main className="min-w-0 flex-1 py-8">
-          <AnimatePresence mode="wait">
-            {active ? (
-              <ToolView key={active.id} tool={active} onBack={backHome} />
-            ) : (
-              <motion.div
-                key="home"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
-              >
-                <HomeView onOpen={openTool} query={query} setQuery={setQuery} onOpenPalette={togglePalette} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
-      </div>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-zinc-800/70 bg-zinc-950">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <LogoMark className="h-8 w-8" />
-              <span className="font-display text-sm font-bold tracking-tight text-zinc-50">
-                zyric<span className="text-emerald-400">.tech</span>
-              </span>
-            </div>
-            <p className="max-w-xs text-xs leading-relaxed text-zinc-500">
-              {TOOL_COUNT} free tools that run entirely in your browser. No accounts, no uploads,
-              no tracking — bookmark it and it&rsquo;s yours.
-            </p>
-            <p className="mono-kicker text-zinc-700">all processing local · {year}</p>
+      {paletteMounted ? (
+        <CommandDialog
+          open={paletteOpen}
+          onOpenChange={setPaletteOpen}
+          shouldFilter={false}
+          className="brut-palette left-1/2 top-[10%] w-[calc(100vw-2rem)] max-w-[560px] -translate-x-1/2 translate-y-0"
+        >
+          <CommandInput
+            placeholder={`SEARCH ${TOOL_COUNT} TOOLS…`}
+            onValueChange={setPaletteQuery}
+          />
+          <CommandList className="max-h-[340px]">
+            <CommandEmpty className="py-8 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414]/50">
+              Nothing in this drawer — try another word.
+            </CommandEmpty>
+            <PaletteItems
+              results={paletteResults}
+              onOpenTool={openTool}
+              close={() => setPaletteOpen(false)}
+            />
+          </CommandList>
+          <div className="flex items-center justify-between border-t-2 border-[#141414] px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-[#141414]/50">
+            <span>↵ OPEN · ESC CLOSE</span>
+            <span>{paletteResults.length} / {TOOL_COUNT} TOOLS</span>
           </div>
-          <div>
-            <p className="mono-kicker mb-3 text-zinc-600">signature</p>
-            <ul className="space-y-2 text-sm">
-              {TOOLS.filter((t) => t.category === "signature")
-                .slice(0, 6)
-                .map((t) => (
-                  <li key={t.id}>
-                    <button type="button" onClick={() => openTool(t.id)} className="text-zinc-400 transition-colors hover:text-emerald-300">
-                      {t.name}
-                    </button>
-                  </li>
-                ))}
-            </ul>
-          </div>
-          <div>
-            <p className="mono-kicker mb-3 text-zinc-600">popular</p>
-            <ul className="space-y-2 text-sm">
-              {POPULAR.map((id) => {
-                const t = TOOLS.find((x) => x.id === id);
-                if (!t) return null;
-                return (
-                  <li key={t.id}>
-                    <button type="button" onClick={() => openTool(t.id)} className="text-zinc-400 transition-colors hover:text-emerald-300">
-                      {t.name}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <div>
-            <p className="mono-kicker mb-3 text-zinc-600">the fine print</p>
-            <ul className="space-y-2 text-xs leading-relaxed text-zinc-500">
-              <li className="flex gap-2">
-                <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" aria-hidden />
-                Your data never leaves your device — saved tools live in this browser&rsquo;s local storage.
-              </li>
-              <li className="flex gap-2">
-                <Zap className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" aria-hidden />
-                No servers in the loop — tools keep working even when you&rsquo;re offline.
-              </li>
-              <li className="flex gap-2">
-                <CommandIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-400" aria-hidden />
-                Press ⌘K anywhere to jump to any of the {TOOL_COUNT} tools.
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-zinc-800/60 py-4 text-center">
-          <p className="font-mono text-[11px] text-zinc-700">
-            © {year} zyric.tech — built by hand, runs on your machine.
-          </p>
-        </div>
-      </footer>
+        </CommandDialog>
+      ) : null}
     </div>
   );
 }

@@ -1,0 +1,846 @@
+     1→"use client";
+     2→
+     3→import { useEffect, useMemo, useRef, useState } from "react";
+     4→import { AnimatePresence, motion } from "framer-motion";
+     5→import {
+     6→  Search,
+     7→  Menu,
+     8→  X,
+     9→  ArrowLeft,
+    10→  ArrowRight,
+    11→  ShieldCheck,
+    12→  Zap,
+    13→  HardDrive,
+    14→  Gem,
+    15→  Command as CommandIcon,
+    16→  Shuffle,
+    17→} from "lucide-react";
+    18→import { Button } from "@/components/ui/button";
+    19→import { Input } from "@/components/ui/input";
+    20→import {
+    21→  Sheet,
+    22→  SheetContent,
+    23→  SheetTitle,
+    24→  SheetTrigger,
+    25→} from "@/components/ui/sheet";
+    26→import { ScrollArea } from "@/components/ui/scroll-area";
+    27→import {
+    28→  CommandDialog,
+    29→  CommandEmpty,
+    30→  CommandGroup,
+    31→  CommandInput,
+    32→  CommandItem,
+    33→  CommandList,
+    34→  CommandSeparator,
+    35→} from "@/components/ui/command";
+    36→import { CATEGORIES, TOOLS, TOOL_COUNT, searchTools, type ToolMeta } from "./registry";
+    37→import { inputCls } from "./hooks";
+    38→
+    39→const BADGE_STYLE: Record<string, string> = {
+    40→  new: "border-cyan-500/40 bg-cyan-500/10 text-cyan-300",
+    41→  local: "border-teal-500/40 bg-teal-500/10 text-teal-300",
+    42→  saved: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
+    43→  unique: "border-amber-500/40 bg-amber-500/10 text-amber-300",
+    44→};
+    45→
+    46→const BADGE_TEXT: Record<string, string> = {
+    47→  new: "New",
+    48→  local: "Private",
+    49→  saved: "Auto-saves",
+    50→  unique: "Signature",
+    51→};
+    52→
+    53→/* ------------------------------- Brand mark -------------------------------- */
+    54→
+    55→function LogoMark({ className = "" }: { className?: string }) {
+    56→  return (
+    57→    <span
+    58→      className={`relative flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 text-zinc-950 shadow-[0_0_18px_rgba(16,185,129,0.3)] ${className}`}
+    59→    >
+    60→      <svg viewBox="0 0 24 24" fill="none" className="h-[58%] w-[58%]" aria-hidden>
+    61→        <path
+    62→          d="M12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7"
+    63→          stroke="currentColor"
+    64→          strokeWidth="2.4"
+    65→          strokeLinecap="round"
+    66→        />
+    67→      </svg>
+    68→    </span>
+    69→  );
+    70→}
+    71→
+    72→/* -------------------------------- SearchBox -------------------------------- */
+    73→
+    74→function SearchBox({
+    75→  value,
+    76→  onChange,
+    77→  autoFocus = false,
+    78→  placeholder = `Search ${TOOL_COUNT} tools…`,
+    79→  inputRef,
+    80→  onKeyDown,
+    81→}: {
+    82→  value: string;
+    83→  onChange: (v: string) => void;
+    84→  autoFocus?: boolean;
+    85→  placeholder?: string;
+    86→  inputRef?: React.RefObject<HTMLInputElement | null>;
+    87→  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    88→}) {
+    89→  return (
+    90→    <div className="relative w-full">
+    91→      <Search
+    92→        className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
+    93→        aria-hidden
+    94→      />
+    95→      <Input
+    96→        ref={inputRef}
+    97→        type="search"
+    98→        value={value}
+    99→        autoFocus={autoFocus}
+   100→        onChange={(e) => onChange(e.target.value)}
+   101→        onKeyDown={onKeyDown}
+   102→        placeholder={placeholder}
+   103→        aria-label="Search tools"
+   104→        className={`h-11 rounded-xl border-zinc-800 bg-zinc-900/70 pl-10 pr-10 text-sm text-zinc-100 placeholder:text-zinc-500 focus-visible:border-emerald-500/60 focus-visible:ring-emerald-500/25 ${inputCls}`}
+   105→      />
+   106→      {value && (
+   107→        <button
+   108→          type="button"
+   109→          onClick={() => onChange("")}
+   110→          aria-label="Clear search"
+   111→          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+   112→        >
+   113→          <X className="h-4 w-4" aria-hidden />
+   114→        </button>
+   115→      )}
+   116→    </div>
+   117→  );
+   118→}
+   119→
+   120→/* --------------------------------- Cards ----------------------------------- */
+   121→
+   122→function ToolCard({
+   123→  tool,
+   124→  onOpen,
+   125→  index,
+   126→  accent = false,
+   127→}: {
+   128→  tool: ToolMeta;
+   129→  onOpen: () => void;
+   130→  index: number;
+   131→  accent?: boolean;
+   132→}) {
+   133→  return (
+   134→    <motion.button
+   135→      type="button"
+   136→      onClick={onOpen}
+   137→      initial={{ opacity: 0, y: 14 }}
+   138→      animate={{ opacity: 1, y: 0 }}
+   139→      transition={{ duration: 0.28, delay: Math.min(index * 0.035, 0.3) }}
+   140→      whileHover={{ y: -3 }}
+   141→      className={`group relative flex flex-col items-start gap-3 overflow-hidden rounded-2xl border p-5 text-left transition-colors ${
+   142→        accent
+   143→          ? "border-amber-500/15 bg-gradient-to-b from-amber-500/[0.06] to-zinc-900/40 hover:border-amber-500/40"
+   144→          : "border-zinc-800/80 bg-gradient-to-b from-zinc-900/60 to-zinc-900/25 hover:border-emerald-500/40"
+   145→      }`}
+   146→    >
+   147→      <span
+   148→        aria-hidden
+   149→        className={`pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
+   150→          accent ? "via-amber-400/70" : "via-emerald-400/70"
+   151→        }`}
+   152→      />
+   153→      <div className="flex w-full items-start justify-between">
+   154→        <span
+   155→          className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 group-hover:scale-105 ${
+   156→            accent
+   157→              ? "border-amber-500/25 bg-amber-500/10 text-amber-400 group-hover:bg-amber-500/20"
+   158→              : "border-zinc-700/60 bg-zinc-800/70 text-zinc-300 group-hover:border-emerald-500/40 group-hover:bg-emerald-500/10 group-hover:text-emerald-300"
+   159→          }`}
+   160→        >
+   161→          <tool.icon className="h-[18px] w-[18px]" aria-hidden />
+   162→        </span>
+   163→        {tool.badge && (
+   164→          <span
+   165→            className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${BADGE_STYLE[tool.badge]}`}
+   166→          >
+   167→            {BADGE_TEXT[tool.badge]}
+   168→          </span>
+   169→        )}
+   170→      </div>
+   171→      <div>
+   172→        <h3 className={`font-semibold transition-colors ${accent ? "text-amber-100 group-hover:text-amber-300" : "text-zinc-100 group-hover:text-emerald-300"}`}>
+   173→          {tool.name}
+   174→        </h3>
+   175→        <p className="mt-1 text-sm leading-relaxed text-zinc-400">{tool.description}</p>
+   176→      </div>
+   177→      <span
+   178→        className={`mt-auto inline-flex translate-x-0 items-center gap-1 text-xs font-medium transition-all group-hover:translate-x-0.5 ${
+   179→          accent ? "text-amber-400" : "text-emerald-400"
+   180→        }`}
+   181→      >
+   182→        Open <ArrowRight className="h-3 w-3" aria-hidden />
+   183→      </span>
+   184→    </motion.button>
+   185→  );
+   186→}
+   187→
+   188→function SectionHeader({
+   189→  icon: Icon,
+   190→  kicker,
+   191→  title,
+   192→  blurb,
+   193→  count,
+   194→  accent = false,
+   195→}: {
+   196→  icon: React.ComponentType<{ className?: string }>;
+   197→  kicker: string;
+   198→  title: string;
+   199→  blurb: string;
+   200→  count?: number;
+   201→  accent?: boolean;
+   202→}) {
+   203→  return (
+   204→    <div className="mb-4 flex items-center gap-3">
+   205→      <span
+   206→        className={`flex h-10 w-10 items-center justify-center rounded-xl border ${
+   207→          accent
+   208→            ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
+   209→            : "border-zinc-800 bg-zinc-900 text-emerald-400"
+   210→        }`}
+   211→      >
+   212→        <Icon className="h-[18px] w-[18px]" aria-hidden />
+   213→      </span>
+   214→      <div className="min-w-0">
+   215→        <p className={`mono-kicker ${accent ? "text-amber-500/80" : "text-zinc-600"}`}>{kicker}</p>
+   216→        <h2 className="font-display text-lg font-semibold tracking-tight text-zinc-50">{title}</h2>
+   217→        <p className="hidden text-xs text-zinc-500 sm:block">{blurb}</p>
+   218→      </div>
+   219→      {count !== undefined && (
+   220→        <span
+   221→          className={`ml-auto shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-xs ${
+   222→            accent ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : "border-zinc-800 bg-zinc-900 text-zinc-400"
+   223→          }`}
+   224→        >
+   225→          {count}
+   226→        </span>
+   227→      )}
+   228→    </div>
+   229→  );
+   230→}
+   231→
+   232→/* --------------------------------- Home ------------------------------------ */
+   233→
+   234→function HomeView({
+   235→  onOpen,
+   236→  query,
+   237→  setQuery,
+   238→  onOpenPalette,
+   239→}: {
+   240→  onOpen: (id: string) => void;
+   241→  query: string;
+   242→  setQuery: (v: string) => void;
+   243→  onOpenPalette: () => void;
+   244→}) {
+   245→  const results = useMemo(() => searchTools(query), [query]);
+   246→  const searching = query.trim().length > 0;
+   247→  const sigTools = useMemo(() => TOOLS.filter((t) => t.category === "signature"), []);
+   248→
+   249→  return (
+   250→    <div className="space-y-14 pb-8">
+   251→      {/* Hero */}
+   252→      <section className="relative overflow-hidden rounded-3xl border border-zinc-800/70 bg-zinc-900/20 px-6 py-14 sm:px-10 sm:py-16">
+   253→        <div aria-hidden className="pointer-events-none absolute inset-0">
+   254→          <div className="absolute left-1/2 top-[-200px] h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-emerald-500/[0.13] blur-[120px]" />
+   255→          <div className="absolute right-[-120px] top-[80px] h-[240px] w-[240px] rounded-full bg-teal-500/[0.09] blur-[90px]" />
+   256→          <div className="dot-grid absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_70%_65%_at_50%_0%,black_25%,transparent_100%)]" />
+   257→        </div>
+   258→
+   259→        <div className="relative mx-auto max-w-3xl text-center">
+   260→          <motion.p
+   261→            initial={{ opacity: 0, y: 8 }}
+   262→            animate={{ opacity: 1, y: 0 }}
+   263→            className="mono-kicker text-emerald-400/90"
+   264→          >
+   265→            {"// "}
+   266→            {TOOL_COUNT} tools · 0 uploads · 0 accounts
+   267→          </motion.p>
+   268→          <motion.h1
+   269→            initial={{ opacity: 0, y: 14 }}
+   270→            animate={{ opacity: 1, y: 0 }}
+   271→            transition={{ delay: 0.06 }}
+   272→            className="mt-4 font-display text-4xl font-bold leading-[1.08] tracking-tight text-zinc-50 sm:text-6xl"
+   273→          >
+   274→            Every tool you need.
+   275→            <br />
+   276→            <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
+   277→              Nothing you don&rsquo;t.
+   278→            </span>
+   279→          </motion.h1>
+   280→          <motion.p
+   281→            initial={{ opacity: 0, y: 14 }}
+   282→            animate={{ opacity: 1, y: 0 }}
+   283→            transition={{ delay: 0.12 }}
+   284→            className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base"
+   285→          >
+   286→            A hand-built collection of everyday tools — notes, trackers, calculators, CSS
+   287→            generators, file checkers and a set of signature problem-solvers you won&rsquo;t
+   288→            find anywhere else. Everything runs right here in your browser.
+   289→          </motion.p>
+   290→
+   291→          <motion.div
+   292→            initial={{ opacity: 0, y: 14 }}
+   293→            animate={{ opacity: 1, y: 0 }}
+   294→            transition={{ delay: 0.18 }}
+   295→            className="mx-auto mt-8 max-w-xl"
+   296→          >
+   297→            <SearchBox
+   298→              value={query}
+   299→              onChange={setQuery}
+   300→              placeholder={`Search ${TOOL_COUNT} tools… try “expense”, “cron”, “qr”…`}
+   301→            />
+   302→            <div className="mt-2.5 flex items-center justify-center gap-4 text-[11px] text-zinc-600">
+   303→              <span>
+   304→                Press{" "}
+   305→                <button
+   306→                  type="button"
+   307→                  onClick={onOpenPalette}
+   308→                  className="rounded border border-zinc-700 bg-zinc-800/80 px-1.5 py-0.5 font-mono text-[10px] text-zinc-300 transition-colors hover:border-emerald-500/50 hover:text-emerald-300"
+   309→                >
+   310→                  ⌘K
+   311→                </button>{" "}
+   312→                for the launcher
+   313→              </span>
+   314→              <span aria-hidden>·</span>
+   315→              <span>
+   316→                or{" "}
+   317→                <kbd className="rounded border border-zinc-700 bg-zinc-800/80 px-1.5 py-0.5 font-mono text-[10px] text-zinc-300">
+   318→                  /
+   319→                </kbd>{" "}
+   320→                to search
+   321→              </span>
+   322→            </div>
+   323→          </motion.div>
+   324→
+   325→          <motion.div
+   326→            initial={{ opacity: 0 }}
+   327→            animate={{ opacity: 1 }}
+   328→            transition={{ delay: 0.26 }}
+   329→            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-500"
+   330→          >
+   331→            <span className="inline-flex items-center gap-1.5">
+   332→              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" aria-hidden /> 100% private — data never leaves your device
+   333→            </span>
+   334→            <span className="inline-flex items-center gap-1.5">
+   335→              <Zap className="h-3.5 w-3.5 text-amber-400" aria-hidden /> Instant — no page reloads
+   336→            </span>
+   337→            <span className="inline-flex items-center gap-1.5">
+   338→              <HardDrive className="h-3.5 w-3.5 text-teal-400" aria-hidden /> Saves locally on this browser
+   339→            </span>
+   340→          </motion.div>
+   341→
+   342→          {/* Stats strip */}
+   343→          <motion.div
+   344→            initial={{ opacity: 0, y: 10 }}
+   345→            animate={{ opacity: 1, y: 0 }}
+   346→            transition={{ delay: 0.32 }}
+   347→            className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-800/60 sm:grid-cols-4"
+   348→          >
+   349→            {[
+   350→              { v: String(TOOL_COUNT), l: "tools & counting" },
+   351→              { v: String(CATEGORIES.length), l: "categories" },
+   352→              { v: "0", l: "files uploaded" },
+   353→              { v: "$0", l: "forever" },
+   354→            ].map((s) => (
+   355→              <div key={s.l} className="bg-zinc-950/80 px-4 py-4">
+   356→                <p className="font-display text-2xl font-bold text-zinc-50">{s.v}</p>
+   357→                <p className="mono-kicker mt-0.5 text-zinc-600">{s.l}</p>
+   358→              </div>
+   359→            ))}
+   360→          </motion.div>
+   361→        </div>
+   362→      </section>
+   363→
+   364→      {/* Search results or categories */}
+   365→      {searching ? (
+   366→        <section aria-label="Search results">
+   367→          <p className="mb-4 text-sm text-zinc-400">
+   368→            {results.length} tool{results.length !== 1 ? "s" : ""} matching{" "}
+   369→            <span className="font-semibold text-emerald-400">“{query.trim()}”</span>
+   370→          </p>
+   371→          {results.length > 0 ? (
+   372→            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+   373→              {results.map((t, i) => (
+   374→                <ToolCard key={t.id} tool={t} index={i} accent={t.category === "signature"} onOpen={() => onOpen(t.id)} />
+   375→              ))}
+   376→            </div>
+   377→          ) : (
+   378→            <p className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 px-6 py-14 text-center text-sm text-zinc-500">
+   379→              Nothing found for &ldquo;{query.trim()}&rdquo;. Try &ldquo;notes&rdquo;, &ldquo;bmi&rdquo;,
+   380→              &ldquo;timer&rdquo; or &ldquo;qr&rdquo;.
+   381→            </p>
+   382→          )}
+   383→        </section>
+   384→      ) : (
+   385→        <>
+   386→          {/* Signature showcase */}
+   387→          <section aria-labelledby="sig-showcase">
+   388→            <SectionHeader
+   389→              icon={Gem}
+   390→              kicker="signature — exclusive to zyric"
+   391→              title="Signature tools"
+   392→              blurb="Built in-house to solve problems no other free tool handles properly"
+   393→              count={sigTools.length}
+   394→              accent
+   395→            />
+   396→            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+   397→              {sigTools.map((t, i) => (
+   398→                <ToolCard key={t.id} tool={t} index={i} accent onOpen={() => onOpen(t.id)} />
+   399→              ))}
+   400→            </div>
+   401→          </section>
+   402→
+   403→          {CATEGORIES.filter((cat) => cat.id !== "signature").map((cat) => {
+   404→            const tools = TOOLS.filter((t) => t.category === cat.id);
+   405→            return (
+   406→              <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
+   407→                <SectionHeader
+   408→                  icon={cat.icon}
+   409→                  kicker={cat.id}
+   410→                  title={cat.label}
+   411→                  blurb={cat.blurb}
+   412→                  count={tools.length}
+   413→                />
+   414→                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+   415→                  {tools.map((t, i) => (
+   416→                    <ToolCard key={t.id} tool={t} index={i} onOpen={() => onOpen(t.id)} />
+   417→                  ))}
+   418→                </div>
+   419→              </section>
+   420→            );
+   421→          })}
+   422→        </>
+   423→      )}
+   424→    </div>
+   425→  );
+   426→}
+   427→
+   428→/* -------------------------------- Tool view -------------------------------- */
+   429→
+   430→function ToolView({ tool, onBack }: { tool: ToolMeta; onBack: () => void }) {
+   431→  const Tool = tool.component;
+   432→  return (
+   433→    <motion.div
+   434→      key={tool.id}
+   435→      initial={{ opacity: 0, y: 12 }}
+   436→      animate={{ opacity: 1, y: 0 }}
+   437→      transition={{ duration: 0.25 }}
+   438→      className="pb-10"
+   439→    >
+   440→      <button
+   441→        type="button"
+   442→        onClick={onBack}
+   443→        className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/60 px-3.5 py-1.5 text-xs text-zinc-400 transition-colors hover:border-emerald-500/40 hover:text-emerald-300"
+   444→      >
+   445→        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> All tools
+   446→      </button>
+   447→      <div className="mb-7 flex items-start gap-4">
+   448→        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/15 to-teal-500/10 text-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.15)]">
+   449→          <tool.icon className="h-5 w-5" aria-hidden />
+   450→        </span>
+   451→        <div className="min-w-0">
+   452→          <h1 className="flex flex-wrap items-center gap-2.5 font-display text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+   453→            {tool.name}
+   454→            {tool.badge && (
+   455→              <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${BADGE_STYLE[tool.badge]}`}>
+   456→                {BADGE_TEXT[tool.badge]}
+   457→              </span>
+   458→            )}
+   459→          </h1>
+   460→          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-zinc-400">
+   461→            {tool.description}{" "}
+   462→            <span className="text-zinc-500">Runs fully in your browser — nothing is uploaded.</span>
+   463→          </p>
+   464→        </div>
+   465→      </div>
+   466→      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 sm:p-7">
+   467→        <Tool />
+   468→      </div>
+   469→    </motion.div>
+   470→  );
+   471→}
+   472→
+   473→/* -------------------------------- Sidebar ---------------------------------- */
+   474→
+   475→function SidebarNav({
+   476→  activeId,
+   477→  onOpen,
+   478→  query,
+   479→  setQuery,
+   480→}: {
+   481→  activeId: string | null;
+   482→  onOpen: (id: string) => void;
+   483→  query: string;
+   484→  setQuery: (v: string) => void;
+   485→}) {
+   486→  const results = useMemo(() => searchTools(query), [query]);
+   487→  const searching = query.trim().length > 0;
+   488→
+   489→  const itemCls = (active: boolean) =>
+   490→    `relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
+   491→      active
+   492→        ? "bg-emerald-500/10 font-medium text-emerald-300"
+   493→        : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100"
+   494→    }`;
+   495→
+   496→  const renderItem = (t: ToolMeta) => (
+   497→    <button key={t.id} type="button" onClick={() => onOpen(t.id)} aria-current={activeId === t.id ? "page" : undefined} className={itemCls(activeId === t.id)}>
+   498→      {activeId === t.id && (
+   499→        <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-emerald-400" aria-hidden />
+   500→      )}
+   501→      <t.icon className="h-4 w-4 shrink-0" aria-hidden />
+   502→      <span className="truncate">{t.name}</span>
+   503→    </button>
+   504→  );
+   505→
+   506→  return (
+   507→    <nav aria-label="Tool categories" className="flex h-full flex-col gap-5">
+   508→      <div className="px-1">
+   509→        <SearchBox value={query} onChange={setQuery} placeholder="Search…" />
+   510→      </div>
+   511→      <ScrollArea className="flex-1 px-1">
+   512→        <div className="space-y-5 pb-4">
+   513→          {searching ? (
+   514→            <div className="space-y-1">
+   515→              <p className="mono-kicker px-2 text-zinc-600">results ({results.length})</p>
+   516→              {results.map(renderItem)}
+   517→            </div>
+   518→          ) : (
+   519→            CATEGORIES.map((cat) => {
+   520→              const tools = TOOLS.filter((t) => t.category === cat.id);
+   521→              return (
+   522→                <div key={cat.id}>
+   523→                  <p className="mono-kicker mb-1.5 flex items-center justify-between px-2 text-zinc-600">
+   524→                    <span className="flex items-center gap-2">
+   525→                      <cat.icon className="h-3 w-3" aria-hidden />
+   526→                      {cat.label}
+   527→                    </span>
+   528→                    <span className="font-mono">{tools.length}</span>
+   529→                  </p>
+   530→                  <div className="space-y-0.5">{tools.map(renderItem)}</div>
+   531→                </div>
+   532→              );
+   533→            })
+   534→          )}
+   535→        </div>
+   536→      </ScrollArea>
+   537→      <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3.5">
+   538→        <p className="mono-kicker flex items-center gap-1.5 text-emerald-500/90">
+   539→          <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> local-first
+   540→        </p>
+   541→        <p className="mt-1 text-[11px] leading-relaxed text-zinc-500">
+   542→          Notes, entries and settings are saved in this browser only — never uploaded.
+   543→        </p>
+   544→      </div>
+   545→    </nav>
+   546→  );
+   547→}
+   548→
+   549→/* ----------------------------- Command palette ------------------------------ */
+   550→
+   551→function CommandPalette({
+   552→  open,
+   553→  setOpen,
+   554→  onOpenTool,
+   555→}: {
+   556→  open: boolean;
+   557→  setOpen: (o: boolean) => void;
+   558→  onOpenTool: (id: string) => void;
+   559→}) {
+   560→  const [q, setQ] = useState("");
+   561→  const results = useMemo(() => searchTools(q), [q]);
+   562→  const sig = results.filter((t) => t.category === "signature");
+   563→  const rest = results.filter((t) => t.category !== "signature");
+   564→
+   565→  const pick = (id: string) => {
+   566→    setOpen(false);
+   567→    setQ("");
+   568→    onOpenTool(id);
+   569→  };
+   570→
+   571→  return (
+   572→    <CommandDialog open={open} onOpenChange={setOpen} className="border-zinc-800 bg-zinc-950 text-zinc-100">
+   573→      <CommandInput
+   574→        placeholder={`Search ${TOOL_COUNT} tools…`}
+   575→        value={q}
+   576→        onValueChange={setQ}
+   577→        className="text-zinc-100 placeholder:text-zinc-500"
+   578→      />
+   579→      <CommandList>
+   580→        <CommandEmpty className="py-8 text-center text-sm text-zinc-500">
+   581→          No tool matches “{q}”.
+   582→        </CommandEmpty>
+   583→        {sig.length > 0 && (
+   584→          <CommandGroup heading="Signature tools">
+   585→            {sig.map((t) => (
+   586→              <CommandItem
+   587→                key={t.id}
+   588→                value={`${t.name} ${t.keywords}`}
+   589→                onSelect={() => pick(t.id)}
+   590→                className="gap-3 rounded-lg text-zinc-200 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:text-emerald-300"
+   591→              >
+   592→                <t.icon className="h-4 w-4 text-amber-400" aria-hidden />
+   593→                <span>{t.name}</span>
+   594→                <span className="ml-auto text-[10px] uppercase tracking-wider text-amber-500/80">signature</span>
+   595→              </CommandItem>
+   596→            ))}
+   597→          </CommandGroup>
+   598→        )}
+   599→        {rest.length > 0 && (
+   600→          <CommandGroup heading="All tools">
+   601→            {rest.map((t) => (
+   602→              <CommandItem
+   603→                key={t.id}
+   604→                value={`${t.name} ${t.keywords}`}
+   605→                onSelect={() => pick(t.id)}
+   606→                className="gap-3 rounded-lg text-zinc-200 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:text-emerald-300"
+   607→              >
+   608→                <t.icon className="h-4 w-4 text-emerald-400" aria-hidden />
+   609→                <span>{t.name}</span>
+   610→                <span className="ml-auto hidden text-[11px] text-zinc-600 sm:block">{t.description.slice(0, 40)}…</span>
+   611→              </CommandItem>
+   612→            ))}
+   613→          </CommandGroup>
+   614→        )}
+   615→        <CommandSeparator />
+   616→        <CommandGroup heading="Actions">
+   617→          <CommandItem
+   618→            value="surprise me random tool"
+   619→            onSelect={() => pick(TOOLS[Math.floor(Math.random() * TOOLS.length)].id)}
+   620→            className="gap-3 rounded-lg text-zinc-200 data-[selected=true]:bg-emerald-500/15 data-[selected=true]:text-emerald-300"
+   621→          >
+   622→            <Shuffle className="h-4 w-4 text-teal-400" aria-hidden /> Surprise me — open a random tool
+   623→          </CommandItem>
+   624→        </CommandGroup>
+   625→      </CommandList>
+   626→    </CommandDialog>
+   627→  );
+   628→}
+   629→
+   630→/* ---------------------------------- App ------------------------------------ */
+   631→
+   632→const POPULAR = ["notes", "expense-tracker", "submission-checker", "password", "qr", "invoice"];
+   633→
+   634→export default function ZyricApp() {
+   635→  const [activeId, setActiveId] = useState<string | null>(null);
+   636→  const [query, setQuery] = useState("");
+   637→  const [mobileOpen, setMobileOpen] = useState(false);
+   638→  const [paletteOpen, setPaletteOpen] = useState(false);
+   639→  const [paletteMounted, setPaletteMounted] = useState(false);
+   640→  const year = new Date().getFullYear();
+   641→
+   642→  const active = useMemo(() => TOOLS.find((t) => t.id === activeId) ?? null, [activeId]);
+   643→
+   644→  // Mount the palette lazily (keeps SSR output clean); ⌘K / Ctrl+K toggles it, "/" too
+   645→  const togglePalette = () => {
+   646→    setPaletteMounted(true);
+   647→    setPaletteOpen((o) => !o);
+   648→  };
+   649→
+   650→  useEffect(() => {
+   651→    const onKey = (e: KeyboardEvent) => {
+   652→      const tag = (e.target as HTMLElement)?.tagName;
+   653→      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+   654→        e.preventDefault();
+   655→        setPaletteMounted(true);
+   656→        setPaletteOpen((o) => !o);
+   657→      } else if (e.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(tag)) {
+   658→        e.preventDefault();
+   659→        setPaletteMounted(true);
+   660→        setPaletteOpen(true);
+   661→      }
+   662→    };
+   663→    window.addEventListener("keydown", onKey);
+   664→    return () => window.removeEventListener("keydown", onKey);
+   665→  }, []);
+   666→
+   667→  const openTool = (id: string) => {
+   668→    setActiveId(id);
+   669→    setMobileOpen(false);
+   670→    setQuery("");
+   671→    window.scrollTo({ top: 0, behavior: "smooth" });
+   672→  };
+   673→
+   674→  const backHome = () => {
+   675→    setActiveId(null);
+   676→    window.scrollTo({ top: 0 });
+   677→  };
+   678→
+   679→  return (
+   680→    <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+   681→      {paletteMounted && <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} onOpenTool={openTool} />}
+   682→
+   683→      {/* Header */}
+   684→      <header className="sticky top-0 z-40 border-b border-zinc-800/70 bg-zinc-950/80 backdrop-blur-xl">
+   685→        <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
+   686→          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+   687→            <SheetTrigger asChild>
+   688→              <Button
+   689→                variant="outline"
+   690→                size="icon"
+   691→                aria-label="Open navigation menu"
+   692→                className="shrink-0 border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800 hover:text-white lg:hidden"
+   693→              >
+   694→                <Menu className="h-5 w-5" aria-hidden />
+   695→              </Button>
+   696→            </SheetTrigger>
+   697→            <SheetContent side="left" className="w-[300px] border-zinc-800 bg-zinc-950 p-4 text-zinc-100">
+   698→              <SheetTitle className="sr-only">Navigation</SheetTitle>
+   699→              <SidebarNav activeId={activeId} onOpen={openTool} query={query} setQuery={setQuery} />
+   700→            </SheetContent>
+   701→          </Sheet>
+   702→
+   703→          <button type="button" onClick={backHome} className="flex items-center gap-2.5" aria-label="zyric.tech — home">
+   704→            <LogoMark className="h-8 w-8" />
+   705→            <span className="flex flex-col text-left leading-tight">
+   706→              <span className="font-display text-sm font-bold tracking-tight text-zinc-50">
+   707→                zyric<span className="text-emerald-400">.tech</span>
+   708→              </span>
+   709→              <span className="mono-kicker text-zinc-600">free tools, zero uploads</span>
+   710→            </span>
+   711→          </button>
+   712→
+   713→          {/* Launcher (desktop) */}
+   714→          <button
+   715→            type="button"
+   716→            onClick={togglePalette}
+   717→            className="mx-auto hidden h-9 w-full max-w-sm items-center gap-2.5 rounded-full border border-zinc-800 bg-zinc-900/60 px-4 text-sm text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-400 lg:flex"
+   718→            aria-label="Open tool launcher"
+   719→          >
+   720→            <Search className="h-3.5 w-3.5" aria-hidden />
+   721→            <span className="flex-1 text-left">Search {TOOL_COUNT} tools…</span>
+   722→            <kbd className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">⌘K</kbd>
+   723→          </button>
+   724→
+   725→          <div className="ml-auto flex items-center gap-2 lg:ml-0">
+   726→            <Button
+   727→              variant="outline"
+   728→              size="icon"
+   729→              onClick={togglePalette}
+   730→              aria-label="Open tool launcher"
+   731→              className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-500 hover:text-white lg:hidden"
+   732→            >
+   733→              <Search className="h-4 w-4" aria-hidden />
+   734→            </Button>
+   735→            <Button
+   736→              asChild
+   737→              size="sm"
+   738→              className="hidden bg-emerald-500 font-medium text-zinc-950 shadow-[0_0_16px_rgba(16,185,129,0.25)] hover:bg-emerald-400 sm:inline-flex"
+   739→            >
+   740→              <button type="button" onClick={backHome}>
+   741→                {active ? "All tools" : `Browse ${TOOL_COUNT}`}
+   742→              </button>
+   743→            </Button>
+   744→          </div>
+   745→        </div>
+   746→      </header>
+   747→
+   748→      {/* Body */}
+   749→      <div className="mx-auto flex w-full max-w-7xl flex-1 gap-8 px-4 sm:px-6 lg:px-8">
+   750→        <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 py-6 lg:block">
+   751→          <SidebarNav activeId={activeId} onOpen={openTool} query={query} setQuery={setQuery} />
+   752→        </aside>
+   753→
+   754→        <main className="min-w-0 flex-1 py-8">
+   755→          <AnimatePresence mode="wait">
+   756→            {active ? (
+   757→              <ToolView key={active.id} tool={active} onBack={backHome} />
+   758→            ) : (
+   759→              <motion.div
+   760→                key="home"
+   761→                initial={{ opacity: 0 }}
+   762→                animate={{ opacity: 1 }}
+   763→                exit={{ opacity: 0 }}
+   764→                transition={{ duration: 0.18 }}
+   765→              >
+   766→                <HomeView onOpen={openTool} query={query} setQuery={setQuery} onOpenPalette={togglePalette} />
+   767→              </motion.div>
+   768→            )}
+   769→          </AnimatePresence>
+   770→        </main>
+   771→      </div>
+   772→
+   773→      {/* Footer */}
+   774→      <footer className="mt-auto border-t border-zinc-800/70 bg-zinc-950">
+   775→        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+   776→          <div className="space-y-3">
+   777→            <div className="flex items-center gap-2.5">
+   778→              <LogoMark className="h-8 w-8" />
+   779→              <span className="font-display text-sm font-bold tracking-tight text-zinc-50">
+   780→                zyric<span className="text-emerald-400">.tech</span>
+   781→              </span>
+   782→            </div>
+   783→            <p className="max-w-xs text-xs leading-relaxed text-zinc-500">
+   784→              {TOOL_COUNT} free tools that run entirely in your browser. No accounts, no uploads,
+   785→              no tracking — bookmark it and it&rsquo;s yours.
+   786→            </p>
+   787→            <p className="mono-kicker text-zinc-700">all processing local · {year}</p>
+   788→          </div>
+   789→          <div>
+   790→            <p className="mono-kicker mb-3 text-zinc-600">signature</p>
+   791→            <ul className="space-y-2 text-sm">
+   792→              {TOOLS.filter((t) => t.category === "signature")
+   793→                .slice(0, 6)
+   794→                .map((t) => (
+   795→                  <li key={t.id}>
+   796→                    <button type="button" onClick={() => openTool(t.id)} className="text-zinc-400 transition-colors hover:text-emerald-300">
+   797→                      {t.name}
+   798→                    </button>
+   799→                  </li>
+   800→                ))}
+   801→            </ul>
+   802→          </div>
+   803→          <div>
+   804→            <p className="mono-kicker mb-3 text-zinc-600">popular</p>
+   805→            <ul className="space-y-2 text-sm">
+   806→              {POPULAR.map((id) => {
+   807→                const t = TOOLS.find((x) => x.id === id);
+   808→                if (!t) return null;
+   809→                return (
+   810→                  <li key={t.id}>
+   811→                    <button type="button" onClick={() => openTool(t.id)} className="text-zinc-400 transition-colors hover:text-emerald-300">
+   812→                      {t.name}
+   813→                    </button>
+   814→                  </li>
+   815→                );
+   816→              })}
+   817→            </ul>
+   818→          </div>
+   819→          <div>
+   820→            <p className="mono-kicker mb-3 text-zinc-600">the fine print</p>
+   821→            <ul className="space-y-2 text-xs leading-relaxed text-zinc-500">
+   822→              <li className="flex gap-2">
+   823→                <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" aria-hidden />
+   824→                Your data never leaves your device — saved tools live in this browser&rsquo;s local storage.
+   825→              </li>
+   826→              <li className="flex gap-2">
+   827→                <Zap className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" aria-hidden />
+   828→                No servers in the loop — tools keep working even when you&rsquo;re offline.
+   829→              </li>
+   830→              <li className="flex gap-2">
+   831→                <CommandIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-400" aria-hidden />
+   832→                Press ⌘K anywhere to jump to any of the {TOOL_COUNT} tools.
+   833→              </li>
+   834→            </ul>
+   835→          </div>
+   836→        </div>
+   837→        <div className="border-t border-zinc-800/60 py-4 text-center">
+   838→          <p className="font-mono text-[11px] text-zinc-700">
+   839→            © {year} zyric.tech — built by hand, runs on your machine.
+   840→          </p>
+   841→        </div>
+   842→      </footer>
+   843→    </div>
+   844→  );
+   845→}
+   846→

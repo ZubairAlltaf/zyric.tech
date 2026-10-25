@@ -46,37 +46,37 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #f3efe6;
+  --foreground: #141414;
+  --card: #ffffff;
+  --card-foreground: #141414;
+  --popover: #ffffff;
+  --popover-foreground: #141414;
+  --primary: #141414;
+  --primary-foreground: #f3efe6;
+  --secondary: #e9e3d5;
+  --secondary-foreground: #141414;
+  --muted: #e9e3d5;
+  --muted-foreground: #5c594f;
+  --accent: #ffd43b;
+  --accent-foreground: #141414;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #141414;
+  --input: #141414;
+  --ring: #141414;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #f3efe6;
+  --sidebar-foreground: #141414;
+  --sidebar-primary: #141414;
+  --sidebar-primary-foreground: #f3efe6;
+  --sidebar-accent: #e9e3d5;
+  --sidebar-accent-foreground: #141414;
+  --sidebar-border: #141414;
+  --sidebar-ring: #141414;
 }
 
 .dark {
@@ -124,12 +124,86 @@
     @apply bg-background text-foreground;
   }
   ::selection {
-    background-color: rgb(16 185 129 / 0.35);
-    color: rgb(236 253 245 / 1);
+    background-color: #ffd43b;
+    color: #141414;
+  }
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
 }
 
-/* Signature mono kicker — dev-flavored section labels */
+/* ==========================================================================
+   ZYRIC BRUTALIST SYSTEM — sticker-bomb / zine / hard shadows
+   ========================================================================== */
+
+.font-brut {
+  font-family: var(--font-brut), var(--font-space-grotesk), sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Outlined display type — the RESOLVED-style giant wordmark */
+.text-stroke-cream {
+  -webkit-text-stroke: 2.5px #f3efe6;
+  color: transparent;
+}
+.text-stroke-ink {
+  -webkit-text-stroke: 2px #141414;
+  color: transparent;
+}
+@media (max-width: 768px) {
+  .text-stroke-cream {
+    -webkit-text-stroke-width: 1.4px;
+  }
+  .text-stroke-ink {
+    -webkit-text-stroke-width: 1.2px;
+  }
+}
+
+/* Hard offset shadows */
+.brut-shadow-xs {
+  box-shadow: 2px 2px 0 0 #141414;
+}
+.brut-shadow-sm {
+  box-shadow: 3px 3px 0 0 #141414;
+}
+.brut-shadow {
+  box-shadow: 5px 5px 0 0 #141414;
+}
+.brut-shadow-lg {
+  box-shadow: 8px 8px 0 0 #141414;
+}
+
+/* Hover lift: press-into-the-page sticker physics */
+.brut-lift {
+  transition:
+    transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.brut-lift:hover {
+  transform: translate(-2px, -2px);
+}
+.brut-lift:active {
+  transform: translate(1px, 1px) !important;
+}
+
+/* Halftone dot textures */
+.dots-light {
+  background-image: radial-gradient(rgba(243, 239, 230, 0.13) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+.dots-dark {
+  background-image: radial-gradient(rgba(20, 20, 20, 0.16) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+/* Subtle dot texture for tool panels (kept from previous system — used by tools) */
+.dot-grid {
+  background-image: radial-gradient(rgb(82 82 91 / 0.35) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Signature mono kicker (used by tools) */
 .mono-kicker {
   font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
@@ -137,13 +211,7 @@
   text-transform: uppercase;
 }
 
-/* Subtle dot texture for hero panels */
-.dot-grid {
-  background-image: radial-gradient(rgb(82 82 91 / 0.35) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-/* Easing generator demo motion */
+/* Easing generator demo motion (used by the Cubic Bezier tool) */
 @keyframes zyric-ease-demo {
   from {
     left: 12px;
@@ -159,19 +227,109 @@
   font-family: var(--font-bengali), var(--font-geist-sans), sans-serif;
 }
 
+/* ---- Motion ---- */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee-x 30s linear infinite;
+}
+.animate-marquee-fast {
+  animation: marquee-x 18s linear infinite;
+}
+
+@keyframes brut-wiggle {
+  0%,
+  100% {
+    transform: rotate(var(--wig, -2deg));
+  }
+  50% {
+    transform: rotate(calc(var(--wig, -2deg) * -1));
+  }
+}
+.animate-wiggle {
+  animation: brut-wiggle 5s ease-in-out infinite;
+}
+
+@keyframes brut-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--wig, 0deg));
+  }
+  50% {
+    transform: translateY(-9px) rotate(var(--wig, 0deg));
+  }
+}
+.animate-float {
+  animation: brut-float 6s ease-in-out infinite;
+}
+
+@keyframes brut-spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: brut-spin-slow 16s linear infinite;
+}
+
+/* ---- Command palette, brutalized ---- */
+.brut-palette {
+  border: 3px solid #141414 !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  color: #141414 !important;
+  box-shadow: 10px 10px 0 0 #141414 !important;
+  top: 10% !important;
+  max-width: calc(100vw - 2rem);
+}
+.brut-palette [cmdk-input] {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.brut-palette [cmdk-input]::placeholder {
+  color: #8a8578;
+}
+.brut-palette [cmdk-item] {
+  border: 2px solid transparent;
+  border-radius: 0 !important;
+  font-family: var(--font-space-grotesk), sans-serif;
+  margin: 2px 0;
+}
+.brut-palette [cmdk-item][data-selected="true"] {
+  background: #ffd43b !important;
+  color: #141414 !important;
+  border-color: #141414;
+  box-shadow: 3px 3px 0 0 #141414;
+}
+.brut-palette [cmdk-group-heading] {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a8578;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(63 63 70 / 0.6);
-  border-radius: 9999px;
+  background: #141414;
+  border: 2px solid #f3efe6;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(82 82 91 / 0.8);
+  background: #3d3d3d;
 }
 
 /* Invoice print mode — only the invoice sheet is visible on paper */
