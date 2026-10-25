@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUp, Asterisk, Command, Dices, Search } from "lucide-react";
 import {
@@ -16,12 +17,15 @@ import {
   CAT_COLORS,
   ColorDot,
   FrameSticker,
+  PriceTag,
   SectionHead,
   SpeechBubble,
+  SquiggleArrow,
   StickyNote,
   BadgeChip,
   chipBase,
 } from "./bruts";
+import { Magnetic, ScrambleText, useFinePointer } from "./experience";
 
 /* ==========================================================================
    HOME — ticker / hero / marquee / headliners / directory / footer
@@ -103,6 +107,61 @@ const letterVar = {
   }),
 };
 
+/**
+ * The wordmark hunts the cursor: letters fill amber, lift and tilt toward
+ * the pointer based on distance. Pure ref mutation — zero re-renders.
+ */
+function useWordmarkHunt(risen: boolean) {
+  const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const frame = useRef(0);
+
+  const apply = useCallback(
+    (mx: number, my: number) => {
+      letterRefs.current.forEach((el) => {
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const dx = mx - (r.left + r.width / 2);
+        const dy = my - (r.top + r.height / 2);
+        const d = Math.hypot(dx, dy);
+        const p = Math.max(0, 1 - d / 190);
+        if (p <= 0.01) {
+          el.style.color = "";
+          el.style.transform = "";
+          return;
+        }
+        el.style.color = `rgba(255, 212, 59, ${(p * 0.92).toFixed(2)})`;
+        el.style.transform = `translateY(${(-9 * p).toFixed(1)}px) rotate(${(dx / 34).toFixed(2)}deg) scale(${(1 + p * 0.05).toFixed(3)})`;
+      });
+    },
+    []
+  );
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!risen) return;
+      const mx = e.clientX;
+      const my = e.clientY;
+      if (frame.current) return;
+      frame.current = requestAnimationFrame(() => {
+        frame.current = 0;
+        apply(mx, my);
+      });
+    },
+    [risen, apply]
+  );
+
+  const onMouseLeave = useCallback(() => {
+    letterRefs.current.forEach((el) => {
+      if (el) {
+        el.style.color = "";
+        el.style.transform = "";
+      }
+    });
+  }, []);
+
+  return { letterRefs, onMouseMove, onMouseLeave };
+}
+
 function Sticker({
   className,
   rotate,
@@ -138,6 +197,14 @@ function Hero({
   onOpenPalette,
   onCatJump,
 }: Pick<HomeProps, "onSurprise" | "onOpenPalette" | "onCatJump">) {
+  const fine = useFinePointer();
+  const [risen, setRisen] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setRisen(true), 1750);
+    return () => window.clearTimeout(t);
+  }, []);
+  const hunt = useWordmarkHunt(risen);
+
   return (
     <section className="relative overflow-hidden border-b-[3px] border-[#141414] bg-[#141414] text-[#F3EFE6]">
       <div className="dots-light absolute inset-0" aria-hidden="true" />
@@ -149,7 +216,10 @@ function Hero({
           transition={{ delay: 0.2 }}
           className="mb-5 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.22em] text-[#F3EFE6]/50 sm:text-[10px]"
         >
-          <span>ZYRIC.TECH — THE WEB&rsquo;S JUNK DRAWER</span>
+          <ScrambleText
+            trigger="mount"
+            text="ZYRIC.TECH — THE WEB'S JUNK DRAWER"
+          />
           <span className="hidden sm:block">EST. 2026 — FREE FOREVER</span>
         </motion.div>
 
@@ -188,22 +258,39 @@ function Hero({
             className="text-stroke-cream font-brut uppercase leading-[0.85]"
             style={{ fontSize: "clamp(4.2rem, 19vw, 16.5rem)" }}
             aria-label="ZYRIC"
+            onMouseMove={fine ? hunt.onMouseMove : undefined}
+            onMouseLeave={fine ? hunt.onMouseLeave : undefined}
           >
             {"ZYRIC".split("").map((ch, i) => (
-              <span key={i} className="inline-block overflow-hidden pb-[0.06em] align-bottom">
+              <span
+                key={i}
+                className={`inline-block pb-[0.06em] align-bottom ${risen ? "" : "overflow-hidden"}`}
+              >
                 <motion.span
                   custom={i}
                   variants={letterVar}
                   initial="hidden"
                   animate="show"
-                  whileHover={{ color: "#FFD43B" }}
+                  ref={(el: HTMLSpanElement | null) => {
+                    hunt.letterRefs.current[i] = el;
+                  }}
                   className="inline-block"
+                  style={{ willChange: "transform, color" }}
                 >
                   {ch}
                 </motion.span>
               </span>
             ))}
           </h1>
+
+          <Sticker
+            className="top-[38%] right-[26%] hidden lg:block"
+            rotate="7deg"
+            anim="wiggle"
+            delay={1.15}
+          >
+            <PriceTag />
+          </Sticker>
 
           <Sticker
             className="-bottom-8 right-[2%] z-20 md:right-[6%]"
@@ -243,6 +330,7 @@ function Hero({
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.55, type: "spring", stiffness: 160, damping: 20 }}
+            className="relative"
           >
             <p className="max-w-xl text-base leading-relaxed text-[#F3EFE6]/80 sm:text-lg">
               A junk drawer of {TOOL_COUNT} free tools that run entirely in your browser. No
@@ -250,33 +338,43 @@ function Hero({
               tool, get it done, close the tab — your data never leaves your device.
             </p>
 
+            <SquiggleArrow
+              className="pointer-events-none absolute -bottom-4 right-[0%] hidden h-12 w-20 -scale-x-100 -rotate-[16deg] animate-wiggle text-[#C6F24E] md:block"
+              style={{ ["--wig" as string]: "3deg" } as React.CSSProperties}
+            />
             <div className="mt-7 flex flex-wrap items-center gap-3">
-              <a
-                href="#toolbox"
-                className="brut-lift inline-flex items-center gap-2 border-2 border-[#141414] bg-[#C6F24E] px-5 py-3.5 font-brut text-sm uppercase text-[#141414]"
-                style={{ boxShadow: "5px 5px 0 #F3EFE6" }}
-              >
-                DIG THROUGH THE TOOLBOX
-                <ArrowRight className="h-4 w-4" strokeWidth={3} />
-              </a>
-              <button
-                type="button"
-                onClick={onSurprise}
-                className="brut-lift inline-flex items-center gap-2 border-2 border-[#141414] bg-white px-5 py-3.5 font-brut text-sm uppercase text-[#141414]"
-                style={{ boxShadow: "5px 5px 0 #FF9DE2" }}
-              >
-                <Dices className="h-4 w-4" strokeWidth={2.5} />
-                SPIN THE DRAWER
-              </button>
-              <button
-                type="button"
-                onClick={onOpenPalette}
-                aria-label="Quick search (Command K)"
-                className="brut-lift inline-flex items-center gap-2 border-2 border-[#F3EFE6]/40 px-4 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#F3EFE6]/80 hover:border-[#FFD43B] hover:text-[#FFD43B]"
-              >
-                <Command className="h-3.5 w-3.5" />
-                K — QUICK SEARCH
-              </button>
+              <Magnetic>
+                <a
+                  href="#toolbox"
+                  className="brut-lift inline-flex items-center gap-2 border-2 border-[#141414] bg-[#C6F24E] px-5 py-3.5 font-brut text-sm uppercase text-[#141414]"
+                  style={{ boxShadow: "5px 5px 0 #F3EFE6" }}
+                >
+                  DIG THROUGH THE TOOLBOX
+                  <ArrowRight className="h-4 w-4" strokeWidth={3} />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <button
+                  type="button"
+                  onClick={onSurprise}
+                  className="brut-lift inline-flex items-center gap-2 border-2 border-[#141414] bg-white px-5 py-3.5 font-brut text-sm uppercase text-[#141414]"
+                  style={{ boxShadow: "5px 5px 0 #FF9DE2" }}
+                >
+                  <Dices className="h-4 w-4" strokeWidth={2.5} />
+                  SPIN THE DRAWER
+                </button>
+              </Magnetic>
+              <Magnetic strength={0.22}>
+                <button
+                  type="button"
+                  onClick={onOpenPalette}
+                  aria-label="Quick search (Command K)"
+                  className="brut-lift inline-flex items-center gap-2 border-2 border-[#F3EFE6]/40 px-4 py-3.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#F3EFE6]/80 hover:border-[#FFD43B] hover:text-[#FFD43B]"
+                >
+                  <Command className="h-3.5 w-3.5" />
+                  K — QUICK SEARCH
+                </button>
+              </Magnetic>
             </div>
           </motion.div>
 
@@ -647,13 +745,13 @@ function Footer({ onCatJump }: Pick<HomeProps, "onCatJump">) {
           </button>
         </div>
 
-        {/* Giant cropped wordmark */}
+        {/* Giant cropped wordmark — fills amber when you pet it */}
         <div
-          className="pointer-events-none relative h-[13vw] max-h-36 select-none overflow-hidden"
+          className="relative h-[13vw] max-h-36 select-none overflow-hidden"
           aria-hidden="true"
         >
           <p
-            className="text-stroke-cream font-brut absolute left-1/2 top-0 -translate-x-1/2 uppercase leading-[0.8]"
+            className="text-stroke-cream font-brut absolute left-1/2 top-0 -translate-x-1/2 uppercase leading-[0.8] transition-colors duration-500 hover:text-[#FFD43B]"
             style={{ fontSize: "clamp(5rem, 21vw, 19rem)" }}
           >
             ZYRIC

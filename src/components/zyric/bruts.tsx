@@ -209,6 +209,58 @@ export function ColorDot({ color, className = "" }: { color: string; className?:
   );
 }
 
+/** Hand-drawn squiggle arrow — points at things worth clicking. */
+export function SquiggleArrow({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg
+      viewBox="0 0 120 64"
+      fill="none"
+      aria-hidden="true"
+      className={className}
+      style={style}
+    >
+      <path
+        d="M8 6 C 30 40, 62 56, 100 44"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M86 32 L 102 44 L 90 56"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+/** Garage-sale price tag — the price of everything on Zyric. */
+export function PriceTag({ className = "", rotate = "-9deg" }: { className?: string; rotate?: string }) {
+  return (
+    <div
+      className={`brut-shadow-sm brut-lift relative border-2 border-[#141414] bg-white ${className}`}
+      style={{ transform: `rotate(${rotate})` }}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute -left-[7px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border-2 border-[#141414] bg-[#F3EFE6]"
+      />
+      <div className="border-b-2 border-[#141414] bg-[#FFD43B] px-3 py-0.5 pl-3 font-mono text-[8px] font-bold uppercase tracking-[0.18em] text-[#141414]">
+        asking price
+      </div>
+      <div className="px-3.5 py-1.5 pl-4 font-brut text-2xl leading-none text-[#141414]">
+        $0<span className="align-top text-xs">.00</span>
+        <span className="ml-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-[#141414]/60">
+          forever
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------- Section heading ------------------------------- */
 
 export function SectionHead({

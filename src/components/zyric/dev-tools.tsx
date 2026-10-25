@@ -76,6 +76,7 @@ export function PasswordTool() {
       : entropy >= 28
       ? { label: "Weak", color: "text-orange-400", bar: "bg-orange-500", pct: 30 }
       : { label: "Very weak", color: "text-rose-400", bar: "bg-rose-500", pct: 14 };
+  const StrengthIcon = strength.icon ?? ShieldCheck;
 
   return (
     <div className="space-y-6">
@@ -101,7 +102,7 @@ export function PasswordTool() {
         <div className="flex items-center justify-between text-sm">
           <Label htmlFor="pw-len" className={labelCls}>Length: {length}</Label>
           <span className={`flex items-center gap-1.5 text-sm font-semibold ${strength.color}`}>
-            <strength.icon className="h-4 w-4" aria-hidden /> {strength.label}
+            <StrengthIcon className="h-4 w-4" aria-hidden /> {strength.label}
           </span>
         </div>
         <Slider

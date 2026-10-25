@@ -199,7 +199,7 @@ export interface ToolMeta {
   name: string;
   description: string;
   category: CategoryId;
-  icon: ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string; strokeWidth?: number }>;
   keywords: string;
   badge?: "new" | "local" | "saved" | "unique";
   component: ComponentType;
@@ -219,7 +219,7 @@ export type CategoryId =
   | "business"
   | "random";
 
-export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ className?: string }>; blurb: string }[] = [
+export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ className?: string; strokeWidth?: number }>; blurb: string }[] = [
   {
     id: "signature",
     label: "Signature Tools",

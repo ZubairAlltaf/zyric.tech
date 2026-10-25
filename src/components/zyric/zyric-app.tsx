@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
+  Asterisk,
   Command as CommandIcon,
   Dices,
   Menu,
@@ -22,6 +23,15 @@ import {
 import { CATEGORIES, TOOLS, TOOL_COUNT, type ToolMeta } from "./registry";
 import { CAT_COLORS, chipBase } from "./bruts";
 import { Home, Ticker } from "./home";
+import {
+  CustomCursor,
+  GrainOverlay,
+  Magnetic,
+  Preloader,
+  ScrambleText,
+  ScrollProgress,
+  launchConfetti,
+} from "./experience";
 
 /* ==========================================================================
    ZYRIC APP — brutal chrome around 75 dark machine islands
@@ -84,23 +94,54 @@ function Nav({
   onOpenMenu: () => void;
   onSurprise: () => void;
 }) {
+  const clicks = useRef(0);
+  const clickTimer = useRef<number | null>(null);
+  const [egg, setEgg] = useState(false);
+
+  const onLogo = () => {
+    onHome();
+    clicks.current += 1;
+    if (clickTimer.current) window.clearTimeout(clickTimer.current);
+    clickTimer.current = window.setTimeout(() => {
+      clicks.current = 0;
+    }, 900);
+    if (clicks.current >= 5) {
+      clicks.current = 0;
+      launchConfetti(window.innerWidth / 2, 46);
+      setEgg(true);
+      window.setTimeout(() => setEgg(false), 1500);
+    }
+  };
+
+  useEffect(
+    () => () => {
+      if (clickTimer.current) window.clearTimeout(clickTimer.current);
+    },
+    []
+  );
+
   return (
     <header className="sticky top-0 z-40 border-b-[3px] border-[#141414] bg-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
-          onClick={onHome}
-          className="flex items-center gap-2"
+          onClick={onLogo}
+          className="group flex items-center gap-2"
           aria-label="Zyric home"
+          title="(psst — click me 5 times)"
         >
           <span className="font-brut text-[26px] uppercase leading-none tracking-tight text-[#141414]">
             ZYRIC
           </span>
+          <Asterisk
+            className="h-5 w-5 animate-spin-slow text-[#FF7A3D] transition-transform duration-300 group-hover:scale-125"
+            strokeWidth={3.2}
+          />
           <span
-            className={`${chipBase} rotate-2`}
-            style={{ background: "#FFD43B" }}
+            className={`${chipBase} rotate-2 transition-colors ${egg ? "!bg-[#FF9DE2]" : ""}`}
+            style={{ background: egg ? undefined : "#FFD43B" }}
           >
-            {TOOL_COUNT} TOOLS
+            {egg ? "★ NICE!" : `${TOOL_COUNT} TOOLS`}
           </span>
         </button>
 
@@ -110,14 +151,14 @@ function Nav({
             onClick={() => jumpTo("headliners")}
             className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#FF7A3D] hover:decoration-[3px]"
           >
-            The Headliners
+            <ScrambleText text="THE HEADLINERS" />
           </button>
           <button
             type="button"
             onClick={() => jumpTo("toolbox")}
             className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#C6F24E] hover:decoration-[3px]"
           >
-            The Toolbox
+            <ScrambleText text="THE TOOLBOX" />
           </button>
           <button
             type="button"
@@ -125,19 +166,21 @@ function Nav({
             className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#FF9DE2] hover:decoration-[3px]"
           >
             <Dices className="h-3.5 w-3.5" strokeWidth={2.5} />
-            Surprise Me
+            <ScrambleText text="SURPRISE ME" />
           </button>
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onOpenPalette}
-            className="brut-lift brut-shadow-xs hidden items-center gap-2 border-2 border-[#141414] bg-[#141414] px-3.5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#F3EFE6] hover:bg-[#FFD43B] hover:text-[#141414] sm:inline-flex"
-          >
-            <CommandIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
-            K · SEARCH
-          </button>
+          <Magnetic strength={0.25} className="hidden sm:inline-block">
+            <button
+              type="button"
+              onClick={onOpenPalette}
+              className="brut-lift brut-shadow-xs inline-flex items-center gap-2 border-2 border-[#141414] bg-[#141414] px-3.5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#F3EFE6] hover:bg-[#FFD43B] hover:text-[#141414]"
+            >
+              <CommandIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
+              K · SEARCH
+            </button>
+          </Magnetic>
           <button
             type="button"
             onClick={onOpenMenu}
@@ -329,6 +372,17 @@ function PaletteItems({
 
 /* -------------------------------- Tool view -------------------------------- */
 
+function Screw({ className }: { className: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`absolute z-10 h-3 w-3 rounded-full border-2 border-zinc-700 bg-zinc-800 ${className}`}
+    >
+      <span className="absolute left-1/2 top-1/2 h-[1.5px] w-[72%] -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-full bg-zinc-500" />
+    </span>
+  );
+}
+
 function ToolView({
   tool,
   onBack,
@@ -344,6 +398,7 @@ function ToolView({
   const next = TOOLS[(idx + 1) % n];
   const catLabel = CATEGORIES.find((c) => c.id === tool.category)?.label ?? "";
   const Tool = tool.component;
+  const serial = `ZYR-${String(idx + 1).padStart(3, "0")}·26`;
 
   return (
     <motion.main
@@ -372,27 +427,47 @@ function ToolView({
         </div>
       </div>
 
-      <h1 className="font-brut text-3xl uppercase leading-tight text-[#141414] sm:text-4xl">
+      {/* Rubber-stamp title */}
+      <motion.h1
+        initial={{ scale: 1.9, opacity: 0, rotate: -5 }}
+        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 340, damping: 17 }}
+        className="origin-left font-brut text-3xl uppercase leading-tight text-[#141414] sm:text-4xl"
+      >
         {tool.name}
-      </h1>
+      </motion.h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#141414]/70">
         {tool.description}
       </p>
 
-      {/* The machine island — tools keep their native dark styling */}
-      <div className="brut-shadow-lg mt-7 border-[3px] border-[#141414] bg-zinc-950 text-zinc-100">
-        <div className="flex items-center justify-between border-b-2 border-zinc-800 px-4 py-2.5">
+      {/* The machine island — wipes down like a factory shutter */}
+      <motion.div
+        initial={{ clipPath: "inset(0 0 100% 0)", y: 8 }}
+        animate={{ clipPath: "inset(0 0 0% 0)", y: 0 }}
+        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
+        className="brut-shadow-lg relative mt-7 border-[3px] border-[#141414] bg-zinc-950 text-zinc-100"
+      >
+        <Screw className="left-2 top-2" />
+        <Screw className="right-2 top-2" />
+        <Screw className="bottom-2 left-2" />
+        <Screw className="bottom-2 right-2" />
+
+        <div className="flex items-center justify-between gap-3 border-b-2 border-zinc-800 px-4 py-2.5">
           <span className="mono-kicker text-zinc-500">the machine — runs on your device</span>
-          <span className="flex gap-1.5" aria-hidden="true">
-            <span className="h-2.5 w-2.5 border border-black bg-[#FF8A7A]" />
-            <span className="h-2.5 w-2.5 border border-black bg-[#FFD43B]" />
-            <span className="h-2.5 w-2.5 border border-black bg-[#5EE39A]" />
+          <span className="hidden items-center gap-3 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-600 sm:flex">
+            <span>SN {serial}</span>
+            <span className="h-3 w-px bg-zinc-700" />
+            <span className="flex gap-1.5" aria-hidden="true">
+              <span className="h-2.5 w-2.5 border border-black bg-[#FF8A7A]" />
+              <span className="h-2.5 w-2.5 border border-black bg-[#FFD43B]" />
+              <span className="h-2.5 w-2.5 border border-black bg-[#5EE39A]" />
+            </span>
           </span>
         </div>
         <div className="p-4 sm:p-6">
           <Tool />
         </div>
-      </div>
+      </motion.div>
 
       <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
         <button
@@ -403,6 +478,9 @@ function ToolView({
           <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
           {prev.name}
         </button>
+        <span className="hidden font-mono text-[9px] uppercase tracking-[0.18em] text-[#141414]/35 md:block">
+          tip — use ← → keys to walk the drawer
+        </span>
         <button
           type="button"
           onClick={() => onOpenTool(next.id)}
@@ -468,7 +546,9 @@ export default function ZyricApp() {
     []
   );
 
-  /* Keyboard: Cmd/Ctrl+K anywhere, "/" when not typing */
+  const activeTool = activeToolId ? TOOLS.find((t) => t.id === activeToolId) ?? null : null;
+
+  /* Keyboard: Cmd/Ctrl+K anywhere, "/" when not typing, ←/→ walks the drawer */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -490,16 +570,37 @@ export default function ZyricApp() {
           setPaletteMounted(true);
           setPaletteOpen(true);
         }
+        return;
+      }
+      if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && activeToolId) {
+        const el = e.target as HTMLElement | null;
+        const typing =
+          el &&
+          (el.tagName === "INPUT" ||
+            el.tagName === "TEXTAREA" ||
+            el.tagName === "SELECT" ||
+            el.isContentEditable);
+        if (typing) return;
+        const idx = TOOLS.findIndex((t) => t.id === activeToolId);
+        const n = TOOLS.length;
+        const nextTool =
+          e.key === "ArrowRight" ? TOOLS[(idx + 1) % n] : TOOLS[(idx - 1 + n) % n];
+        if (nextTool) {
+          e.preventDefault();
+          openTool(nextTool.id);
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [paletteOpen]);
-
-  const activeTool = activeToolId ? TOOLS.find((t) => t.id === activeToolId) ?? null : null;
+  }, [paletteOpen, activeToolId, openTool]);
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F3EFE6] text-[#141414]">
+      <Preloader />
+      <CustomCursor />
+      <GrainOverlay />
+      <ScrollProgress />
       <Ticker />
       <Nav
         onHome={goHome}
