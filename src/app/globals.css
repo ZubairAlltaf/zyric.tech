@@ -8,6 +8,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -116,8 +117,41 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+  ::selection {
+    background-color: rgb(16 185 129 / 0.35);
+    color: rgb(236 253 245 / 1);
+  }
+}
+
+/* Signature mono kicker — dev-flavored section labels */
+.mono-kicker {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Subtle dot texture for hero panels */
+.dot-grid {
+  background-image: radial-gradient(rgb(82 82 91 / 0.35) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Easing generator demo motion */
+@keyframes zyric-ease-demo {
+  from {
+    left: 12px;
+    top: 50%;
+  }
+  to {
+    left: calc(100% - 44px);
+    top: 50%;
   }
 }
 
@@ -126,8 +160,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;

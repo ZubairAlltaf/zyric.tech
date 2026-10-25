@@ -59,6 +59,28 @@ import {
   Pipette,
   Contrast,
   Printer,
+  Shapes,
+  Megaphone,
+  Box,
+  Frame,
+  Layers,
+  Blend,
+  Spline,
+  Clock9,
+  Network,
+  Tags,
+  MousePointerClick,
+  Globe2,
+  Ratio,
+  BarChart3,
+  FlipHorizontal,
+  Omega,
+  UserRound,
+  FileCog,
+  PenTool,
+  Waves,
+  FerrisWheel,
+  Type,
 } from "lucide-react";
 
 import {
@@ -146,6 +168,31 @@ import {
   NumberWordsTool,
 } from "./biz-tools";
 import { RandomPickerTool } from "./random-tools";
+import {
+  BoxShadowTool,
+  FancyRadiusTool,
+  GlassTool,
+  BlobTool,
+  EasingTool,
+} from "./css-tools-add";
+import {
+  CronTool,
+  SubnetTool,
+  MetaTagTool,
+  UtmTool,
+  TimezoneTool,
+  AspectTool,
+} from "./web-tools";
+import {
+  WordFreqTool,
+  CharLimitsTool,
+  TextReverserTool,
+  SymbolPickerTool,
+  MockDataTool,
+} from "./text-tools-add2";
+import { FileRenamerTool } from "./signature-tools4";
+import { SignatureMakerTool } from "./media-tools-add";
+import { FocusSoundsTool, DecisionWheelTool } from "./fun-audio-tools";
 
 export interface ToolMeta {
   id: string;
@@ -166,7 +213,9 @@ export type CategoryId =
   | "converters"
   | "time"
   | "generators"
+  | "css"
   | "media"
+  | "web"
   | "business"
   | "random";
 
@@ -176,6 +225,12 @@ export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ 
     label: "Signature Tools",
     icon: Gem,
     blurb: "Exclusive problem-solvers — file checks, document reviews, deadlines & privacy",
+  },
+  {
+    id: "css",
+    label: "CSS & Design",
+    icon: Shapes,
+    blurb: "Box shadows, blobs, glass, easing — copy-ready CSS, generated live",
   },
   {
     id: "notes",
@@ -218,6 +273,12 @@ export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ 
     label: "Image & Color",
     icon: Images,
     blurb: "Compress, resize, convert images and craft perfect colors",
+  },
+  {
+    id: "web",
+    label: "Web & Marketing",
+    icon: Megaphone,
+    blurb: "Meta tags, UTM links, cron, subnets, time zones and ratios",
   },
   {
     id: "business",
@@ -315,6 +376,16 @@ export const TOOLS: ToolMeta[] = [
     badge: "unique",
     component: PrivacyScrubberTool,
   },
+  {
+    id: "file-renamer",
+    name: "Batch File Renamer",
+    description: "Rename a whole folder of files in one pass — then download a tidy ZIP.",
+    category: "signature",
+    icon: FileCog,
+    keywords: "batch rename files bulk filename prefix suffix numbering case zip download camera photos",
+    badge: "unique",
+    component: FileRenamerTool,
+  },
 
   // ---------------- Notes & Writing ----------------
   {
@@ -393,6 +464,42 @@ export const TOOLS: ToolMeta[] = [
     keywords: "slug url seo kebab snake camel pascal filename naming generator",
     badge: "new",
     component: SlugGeneratorTool,
+  },
+  {
+    id: "word-frequency",
+    name: "Word Frequency Counter",
+    description: "See which words dominate your text — ranked bars, CSV export.",
+    category: "notes",
+    icon: BarChart3,
+    keywords: "word frequency count ranked top words density analyze essay seo keywords",
+    component: WordFreqTool,
+  },
+  {
+    id: "char-limits",
+    name: "Character Limit Checker",
+    description: "Live limits for X, SMS, Instagram, SEO titles and more.",
+    category: "notes",
+    icon: Type,
+    keywords: "character limit counter twitter sms instagram linkedin seo title meta description platform",
+    component: CharLimitsTool,
+  },
+  {
+    id: "text-reverser",
+    name: "Text Reverser",
+    description: "Reverse characters, words or lines — or flip text upside down.",
+    category: "notes",
+    icon: FlipHorizontal,
+    keywords: "reverse text backwards flip upside down mirror characters words lines",
+    component: TextReverserTool,
+  },
+  {
+    id: "symbols",
+    name: "Symbol & Character Picker",
+    description: "Arrows, math, currency, stars and Greek letters — click to copy.",
+    category: "notes",
+    icon: Omega,
+    keywords: "symbols special characters arrows math currency copy paste star arrow alpha omega signs",
+    component: SymbolPickerTool,
   },
 
   // ---------------- Trackers ----------------
@@ -593,6 +700,15 @@ export const TOOLS: ToolMeta[] = [
     badge: "new",
     component: CountdownTool,
   },
+  {
+    id: "focus-sounds",
+    name: "Focus Sounds",
+    description: "White, pink or brown noise — synthesized offline for deep work.",
+    category: "time",
+    icon: Waves,
+    keywords: "white noise pink brown focus sounds study relax sleep ambient offline noisli",
+    component: FocusSoundsTool,
+  },
 
   // ---------------- Generators & Dev ----------------
   {
@@ -671,6 +787,62 @@ export const TOOLS: ToolMeta[] = [
     badge: "new",
     component: MarkdownTool,
   },
+  {
+    id: "mock-data",
+    name: "Mock User Data Generator",
+    description: "Invent believable demo users — names, emails, phones, avatars.",
+    category: "generators",
+    icon: UserRound,
+    keywords: "mock fake dummy data users names emails phone test demo json csv placeholder",
+    component: MockDataTool,
+  },
+
+  // ---------------- CSS & Design ----------------
+  {
+    id: "box-shadow",
+    name: "Box Shadow Generator",
+    description: "Layered CSS shadows with live preview and one-click copy.",
+    category: "css",
+    icon: Box,
+    keywords: "box shadow css generator inset glow drop effect design",
+    component: BoxShadowTool,
+  },
+  {
+    id: "fancy-radius",
+    name: "Fancy Border Radius",
+    description: "Blob shapes from 8-slice radius values — organic CSS corners.",
+    category: "css",
+    icon: Frame,
+    keywords: "fancy border radius blob shape organic css corners generator 9dots",
+    component: FancyRadiusTool,
+  },
+  {
+    id: "glassmorphism",
+    name: "Glassmorphism Generator",
+    description: "Frosted glass cards with backdrop blur — tuned live.",
+    category: "css",
+    icon: Layers,
+    keywords: "glassmorphism frosted glass blur backdrop css generator ui card",
+    component: GlassTool,
+  },
+  {
+    id: "blob-maker",
+    name: "Blob Shape Generator",
+    description: "Random organic SVG blobs for hero art and backgrounds.",
+    category: "css",
+    icon: Blend,
+    keywords: "blob svg shape organic random background hero decorative generator",
+    component: BlobTool,
+  },
+  {
+    id: "easing",
+    name: "Cubic Bezier Generator",
+    description: "Sculpt easing curves with an animated motion preview.",
+    category: "css",
+    icon: Spline,
+    keywords: "cubic bezier easing animation curve transition timing function css generator",
+    component: EasingTool,
+  },
 
   // ---------------- Image & Color ----------------
   {
@@ -714,6 +886,15 @@ export const TOOLS: ToolMeta[] = [
     component: FaviconTool,
   },
   {
+    id: "signature-maker",
+    name: "Signature Maker",
+    description: "Draw your signature and download it as a transparent PNG.",
+    category: "media",
+    icon: PenTool,
+    keywords: "signature draw handwritten png transparent download sign document",
+    component: SignatureMakerTool,
+  },
+  {
     id: "color-converter",
     name: "Color Converter",
     description: "HEX ↔ RGB ↔ HSL with tints & shades you can copy.",
@@ -754,6 +935,63 @@ export const TOOLS: ToolMeta[] = [
     component: GradientTool,
   },
 
+  // ---------------- Web & Marketing ----------------
+  {
+    id: "cron",
+    name: "Crontab Explainer",
+    description: "Decode any cron expression into plain English and next runs.",
+    category: "web",
+    icon: Clock9,
+    keywords: "cron expression crontab schedule explain next run devops linux server",
+    component: CronTool,
+  },
+  {
+    id: "subnet",
+    name: "IP Subnet Calculator",
+    description: "CIDR math: network, range, mask, hosts — explained.",
+    category: "web",
+    icon: Network,
+    keywords: "subnet cidr ipv4 network mask broadcast hosts calculator ip range devops",
+    component: SubnetTool,
+  },
+  {
+    id: "meta-tags",
+    name: "Meta Tag Generator",
+    description: "SEO + social tags with a live search-result preview.",
+    category: "web",
+    icon: Tags,
+    keywords: "meta tags open graph twitter card seo html head generator preview",
+    component: MetaTagTool,
+  },
+  {
+    id: "utm-builder",
+    name: "UTM Link Builder",
+    description: "Campaign URLs with a saved link box — never lose a tag.",
+    category: "web",
+    icon: MousePointerClick,
+    keywords: "utm source medium campaign url builder tracking marketing analytics links",
+    badge: "saved",
+    component: UtmTool,
+  },
+  {
+    id: "timezone",
+    name: "Time Zone Converter",
+    description: "Convert meetings across cities with the exact offset math.",
+    category: "web",
+    icon: Globe2,
+    keywords: "time zone converter utc meeting world clock karachi dhaka new york london",
+    component: TimezoneTool,
+  },
+  {
+    id: "aspect-ratio",
+    name: "Aspect Ratio Calculator",
+    description: "Dimensions to ratio, ratio to dimensions — with presets.",
+    category: "web",
+    icon: Ratio,
+    keywords: "aspect ratio calculator 16:9 4:3 dimensions resize video image designer",
+    component: AspectTool,
+  },
+
   // ---------------- Business & Money ----------------
   {
     id: "invoice",
@@ -785,6 +1023,15 @@ export const TOOLS: ToolMeta[] = [
     icon: Dices,
     keywords: "random coin flip dice roll number picker list lucky draw decision",
     component: RandomPickerTool,
+  },
+  {
+    id: "decision-wheel",
+    name: "Decision Wheel",
+    description: "Spin a colorful wheel to settle it — your own options.",
+    category: "random",
+    icon: FerrisWheel,
+    keywords: "wheel spin decision picker roulette random chooser yes no what to eat",
+    component: DecisionWheelTool,
   },
 ];
 
