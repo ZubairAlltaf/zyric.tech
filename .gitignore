@@ -52,3 +52,15 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# sandbox / environment-specific (not part of the zyric source)
+.zscripts/
+db/
+download/
+examples/
+mini-services/
+Caddyfile
+qamarix_*.html
+worklog.md
+agent-ctx/
+bun.lock.bak
