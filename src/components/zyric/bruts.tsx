@@ -23,6 +23,15 @@ export const CAT_COLORS: Record<CategoryId, string> = {
   web: "#FFB3C6", // rose
   business: "#F5D6A3", // tan
   random: "#FFFFFF", // white
+  writing: "#F7C873", // peach
+  devkit: "#8AE1FF", // ice
+  data: "#7FE8C0", // seafoam
+  money: "#FFE066", // gold
+  life: "#FFB38A", // apricot
+  study: "#C9B8FF", // periwinkle
+  health: "#FF9DB0", // bubblegum
+  fun: "#FF87E8", // magenta
+  websec: "#8FF0E0", // aqua
 };
 
 export const BADGES: Record<string, { label: string; bg: string }> = {

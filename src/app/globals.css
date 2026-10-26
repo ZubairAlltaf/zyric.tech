@@ -120,8 +120,31 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Overflow jail: nothing may ever widen the page sideways.
+     `clip` is stronger than `hidden` (no scroll trap for programmatic scroll) */
+  html,
+  body {
+    overflow-x: clip;
+  }
   body {
     @apply bg-background text-foreground;
+    overflow-wrap: anywhere;
+  }
+  /* Flex/grid children must be allowed to shrink — the #1 cause of
+     "blank white scroll to the right" inside tool panels */
+  .zyric-island,
+  .zyric-island * {
+    min-width: 0;
+  }
+  .zyric-island {
+    overflow-wrap: anywhere;
+  }
+  .zyric-island table {
+    max-width: 100%;
+    table-layout: fixed;
+  }
+  .zyric-island :where(h1, h2, h3, h4, p, span, td, th, li, div) {
+    overflow-wrap: anywhere;
   }
   ::selection {
     background-color: #ffd43b;

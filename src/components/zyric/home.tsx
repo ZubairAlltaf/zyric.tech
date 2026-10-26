@@ -320,7 +320,7 @@ function Hero({
             transition={{ delay: 0.6 }}
             className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F3EFE6]/60 sm:text-xs"
           >
-            {TOOL_COUNT} tools · 12 shelves · 0 servers
+            {TOOL_COUNT} tools · {CATEGORIES.length} shelves · 0 servers
           </motion.p>
         </div>
 
@@ -387,7 +387,7 @@ function Hero({
           >
             {[
               [String(TOOL_COUNT), "tools online"],
-              ["12", "categories"],
+              [String(CATEGORIES.length), "categories"],
               ["0", "files uploaded"],
               ["$0", "forever"],
             ].map(([v, l]) => (

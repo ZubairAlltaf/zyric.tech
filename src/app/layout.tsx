@@ -30,12 +30,26 @@ const archivoBlack = Archivo_Black({
 });
 
 export const metadata: Metadata = {
-  title: "zyric.tech — 75 Free Online Tools. Zero Servers.",
+  title: "zyric.tech — 255 Free Online Tools. Zero Servers.",
   description:
-    "A junk drawer of 75 free browser tools, including 9 signature tools you won't find elsewhere: file submission checker, batch file renamer, spreadsheet health inspector, document diff, website launch checker, expiry calendar, handover pack builder and privacy scrubber — plus CSS generators, notes, trackers, calculators, converters, image & color tools, invoices and more. No uploads, no sign-ups, everything runs on your device.",
+    "A junk drawer of 255 free browser tools across 21 shelves: writing & readability, dev utilities, data & CSV surgery, money & finance, home & life, study & brain trainers, health calculators, security with real WebCrypto (AES vault, TOTP, phishing checks) and party games — plus CSS generators, notes, trackers, converters, image & color tools and invoices. No uploads, no sign-ups, everything runs on your device.",
   keywords: [
     "free online tools",
     "web tools",
+    "readability checker",
+    "jwt decoder",
+    "totp generator",
+    "aes encryption online",
+    "csv to json",
+    "compound interest calculator",
+    "sleep cycle calculator",
+    "flashcards online",
+    "typing test",
+    "phishing url checker",
+    "passphrase generator",
+    "recipe scaler",
+    "tdee calculator",
+    "morse code translator",
     "file submission checker",
     "batch file renamer",
     "spreadsheet health inspector",
@@ -61,9 +75,9 @@ export const metadata: Metadata = {
     "zyric",
   ],
   openGraph: {
-    title: "zyric.tech — 75 Free Online Tools. Zero Servers.",
+    title: "zyric.tech — 255 Free Online Tools. Zero Servers.",
     description:
-      "75 free tools in one place — including 9 signature tools exclusive to Zyric. Runs locally, no sign-up.",
+      "255 free tools in one place — writing, dev, data, money, life, study, health, security and fun. Runs locally, no sign-up.",
     type: "website",
   },
 };

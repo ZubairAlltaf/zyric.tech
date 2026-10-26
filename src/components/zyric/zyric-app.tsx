@@ -445,7 +445,7 @@ function ToolView({
         initial={{ clipPath: "inset(0 0 100% 0)", y: 8 }}
         animate={{ clipPath: "inset(0 0 0% 0)", y: 0 }}
         transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
-        className="brut-shadow-lg relative mt-7 border-[3px] border-[#141414] bg-zinc-950 text-zinc-100"
+        className="brut-shadow-lg zyric-island relative mt-7 border-[3px] border-[#141414] bg-zinc-950 text-zinc-100"
       >
         <Screw className="left-2 top-2" />
         <Screw className="right-2 top-2" />

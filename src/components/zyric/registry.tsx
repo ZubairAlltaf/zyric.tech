@@ -81,6 +81,22 @@ import {
   Waves,
   FerrisWheel,
   Type,
+  // extended fleet icons
+  Gauge, Ear, Rabbit, AudioWaveform, GitCompare, Shuffle, Puzzle, Quote, Smile, Merge,
+  AtSign, Ticket, TextQuote, BookOpen, Brush, Bold, Activity, Scissors, FileKey, Link,
+  MonitorSmartphone, Info, Keyboard, Aperture, Minimize2, Dna, Code, Route, List,
+  FileDigit, Crosshair, GitBranch, ArrowUpNarrowWide, Lock, Table, CircuitBoard, Smartphone,
+  Command, Plug, Braces, Sheet, Eraser, FlipVertical2, CopyX, ArrowDownWideNarrow, PanelRight,
+  ArrowLeftRight, TableProperties, Sigma, VenetianMask, Mail, Compass, MapPin, Cloud,
+  TrendingUp, PiggyBank, Armchair, Home, Building, BadgeDollarSign, Laptop, PieChart,
+  RefreshCw, Snowflake, CreditCard, TrendingDown, Store, Equal, Target, Bitcoin,
+  Hourglass, CookingPot, Utensils, Coffee, Wheat, ShoppingCart, CalendarDays, SprayCan,
+  Sprout, Paintbrush, Package, Tv, Fuel, Backpack, Presentation, Gift, PartyPopper, Receipt,
+  Baby, PawPrint, Moon, BookMarked, History, GraduationCap, Flag, ClipboardList, PenLine,
+  Library, Lightbulb, LayoutGrid, Divide, Triangle, Atom, Play, Heart, HeartPulse, Pill,
+  Stars, Orbit, MessageCircle, Hand, Feather, Music, CircleDot, Swords, Zap, Ghost,
+  ShieldCheck, ShieldAlert, Key, Server, Chrome, Bot, MailCheck, PlaneTakeoff, Search, Map,
+  Shirt, Repeat, Weight, Salad, Dumbbell, Footprints, Medal, Watch, Radio,
 } from "lucide-react";
 
 import {
@@ -194,6 +210,64 @@ import { FileRenamerTool } from "./signature-tools4";
 import { SignatureMakerTool } from "./media-tools-add";
 import { FocusSoundsTool, DecisionWheelTool } from "./fun-audio-tools";
 
+// ---- extended fleet (kit files) ----
+import {
+  ReadabilityTool, PassiveVoiceTool, WeaselWordTool, SentenceRhythmTool, ToneShiftTool,
+  WordDiffTool, PalindromeTool, AnagramTool, CrosswordTool, AcronymTool, TypographyCleanerTool,
+  EmojiTranslateTool, NameBlendTool, UsernameTool, HashtagTool, CaptionFormatTool,
+  SpeechTimerTool, HomophoneTool, FancyFontTool, EmphasisTool, LetterFreqTool, ThreadSplitterTool,
+} from "./kit-writing";
+import {
+  JwtDecoderTool, QueryParamsTool, UaParserTool, HttpStatusTool, KeycodeTool,
+  PlaceholderUrlTool, SvgOptimizerTool, FaviconGrabTool, NanoIdTool, HtmlEntitiesTool,
+  UrlParserTool, MarkdownTocTool, JsMinifyTool, SpecificityTool, GitCheatTool, SemVerTool,
+  ChmodTool, AsciiTableTool, BitwiseTool, DeviceInfoTool, ShortcutRecorderTool, PortTool,
+} from "./kit-dev";
+import {
+  CsvToJsonTool, JsonToCsvTool, CsvCleanerTool, TransposeTool, DedupeTool, SortLinesTool,
+  ColumnTool, DelimConvertTool, MdTableTool, NumberStatsTool, AnonymizerTool,
+  EmailExtractorTool, UrlExtractorTool, IpExtractorTool, FrequencyCloudTool, SampleRowsTool,
+} from "./kit-data";
+import {
+  CompoundInterestTool, SavingsGoalTool, RetirementTool, MortgageTool, RentVsBuyTool,
+  SalaryHourlyTool, FreelanceRateTool, BudgetSplitTool, RentSplitterTool, SubscriptionAuditTool,
+  DebtSnowballTool, CardMinimumTool, InflationTool, MarginTool, BreakEvenTool, RoiTool,
+  CryptoProfitTool, StockAverageTool, CommissionTool, OvertimeTool,
+} from "./kit-money";
+import {
+  RecipeScalerTool, CookingConverterTool, CoffeeRatioTool, PastaPortionTool, GroceryEstimatorTool,
+  MealPlannerTool, CleaningScheduleTool, LaundryTool, PlantWateringTool, PaintTool,
+  MovingBoxesTool, TvTool, FuelSplitterTool, PackingTool, MeetingCostTool, GiftBudgetTool,
+  PartyFoodTool, BillSplitterTool, BabyAgeTool, PetPortionTool, SleepCycleTool,
+} from "./kit-life";
+import {
+  FlashcardsTool, SpacedRepetitionTool, GpaTool, GradeNeededTool, ReadingSpeedTool,
+  AssignmentPlannerTool, CornellTool, CitationTool, MnemonicTool, TimesTableTool, PrimeTool,
+  QuadraticTool, TriangleTool, ProbabilityTool, SciCalcTool, GraphPlotterTool, PeriodicTool,
+  TypingTestTool,
+} from "./kit-study";
+import {
+  TdeeTool, MacroTool, BodyFatTool, IdealWeightTool, ProteinTool, OneRepMaxTool, PaceTool,
+  RacePredictTool, StepsTool, FastingTool, DueDateTool, HrZonesTool, IntervalTimerTool,
+  MedicineTool,
+} from "./kit-health";
+import {
+  ZodiacTool, ChineseZodiacTool, NameCompatTool, WouldYouRatherTool, TruthDareTool,
+  NeverHaveIEverTool, IceBreakerTool, StoryPromptTool, BandNameTool, ShakespeareTool,
+  Magic8Tool, LotteryTool, RpsTool, MemoryGameTool, ReactionTool, AimTrainerTool, CpsTool,
+  EmojiStoryTool,
+} from "./kit-fun";
+import {
+  PasswordAuditTool, PhishingTool, AesVaultTool, PassphraseTool, TotpTool, DnsTool,
+  SecurityChecklistTool, BrowserDetectTool, PrivacyPolicyTool, RobotsTool, JsonLdTool,
+  EmailSignatureTool, OooTool, DomainBrainTool, FontPreviewTool, SitemapTool,
+} from "./kit-webmore";
+import {
+  MorseTool, CaesarTool, NatoTool, RepeaterTool, SyllableTool, BirthdayTool, GasVsEvTool,
+  SimpleInterestTool, DurationTool, ReadingTimeTool, PxRemTool, GroupSplitterTool,
+  WeekNumberTool,
+} from "./kit-extras";
+
 export interface ToolMeta {
   id: string;
   name: string;
@@ -217,7 +291,16 @@ export type CategoryId =
   | "media"
   | "web"
   | "business"
-  | "random";
+  | "random"
+  | "writing"
+  | "devkit"
+  | "data"
+  | "money"
+  | "life"
+  | "study"
+  | "health"
+  | "fun"
+  | "websec";
 
 export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ className?: string; strokeWidth?: number }>; blurb: string }[] = [
   {
@@ -291,6 +374,60 @@ export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ 
     label: "Random & Fun",
     icon: Dices,
     blurb: "Coins, dice, numbers and lucky picks",
+  },
+  {
+    id: "writing",
+    label: "Writing & Words",
+    icon: BookOpen,
+    blurb: "Readability, diffing, fancy fonts, threads — every text trick in one drawer",
+  },
+  {
+    id: "devkit",
+    label: "Dev & Code",
+    icon: Code,
+    blurb: "JWTs, ports, bitwise, chmod, git cheats — the terminal drawer",
+  },
+  {
+    id: "data",
+    label: "Data & Files",
+    icon: Braces,
+    blurb: "CSV surgery, extractors, stats and sampling — nothing leaves your device",
+  },
+  {
+    id: "money",
+    label: "Money & Finance",
+    icon: PiggyBank,
+    blurb: "Compound interest, debt payoff, crypto P&L, budgets that add up",
+  },
+  {
+    id: "life",
+    label: "Life & Home",
+    icon: CookingPot,
+    blurb: "Kitchen math, plants, packing, sleep cycles — real-life cheat codes",
+  },
+  {
+    id: "study",
+    label: "Study & Brain",
+    icon: GraduationCap,
+    blurb: "Flashcards, math solvers, citations, typing speed — learn faster",
+  },
+  {
+    id: "health",
+    label: "Health & Body",
+    icon: HeartPulse,
+    blurb: "Calories, macros, pace, HR zones, intervals — estimates, not lectures",
+  },
+  {
+    id: "fun",
+    label: "Fun & Weird",
+    icon: PartyPopper,
+    blurb: "Party games, reaction tests, fortune orbs and pure nonsense engines",
+  },
+  {
+    id: "websec",
+    label: "Security & Web",
+    icon: ShieldCheck,
+    blurb: "AES vault, TOTP codes, phishing checks, SEO files — real WebCrypto",
   },
 ];
 
@@ -1033,6 +1170,206 @@ export const TOOLS: ToolMeta[] = [
     keywords: "wheel spin decision picker roulette random chooser yes no what to eat",
     component: DecisionWheelTool,
   },
+
+  // ================ EXTENDED FLEET — Writing & Words ================
+  { id: "readability", name: "Readability Score", description: "Flesch reading ease + grade level for any paragraph you paste.", category: "writing", icon: Gauge, keywords: "readability flesch grade level reading ease writing editor essay", badge: "new", component: ReadabilityTool },
+  { id: "passive-voice", name: "Passive Voice Detector", description: "Flags “was written by”-style passives so your prose punches.", category: "writing", icon: Ear, keywords: "passive voice active writing grammar editor style", badge: "new", component: PassiveVoiceTool },
+  { id: "weasel-words", name: "Weasel Word Finder", description: "Hunts filler like “very”, “basically”, “things” weakening your text.", category: "writing", icon: Rabbit, keywords: "weasel words filler fluff editing prose buzzword", badge: "new", component: WeaselWordTool },
+  { id: "sentence-rhythm", name: "Sentence Rhythm Visualizer", description: "A bar per sentence — instantly see marathons and staccato beats.", category: "writing", icon: AudioWaveform, keywords: "sentence length rhythm variety writing editor flow", badge: "new", component: SentenceRhythmTool },
+  { id: "tone-shift", name: "Tone Shifter", description: "Rewrites slang ↔ formal with a 30-phrase vocabulary swap engine.", category: "writing", icon: Shirt, keywords: "tone formal casual rewrite professional slang email", badge: "new", component: ToneShiftTool },
+  { id: "word-diff", name: "Word Diff", description: "Two drafts in, color-coded added/removed words out.", category: "writing", icon: GitCompare, keywords: "diff compare versions draft changes editor", badge: "new", component: WordDiffTool },
+  { id: "palindrome", name: "Palindrome Checker", description: "Tests words, phrases and numbers both ways — punctuation ignored.", category: "writing", icon: Repeat, keywords: "palindrome reverse word game puzzle", component: PalindromeTool },
+  { id: "anagram", name: "Anagram Solver", description: "Are these two words siblings? Sorted-letters comparison, instantly.", category: "writing", icon: Shuffle, keywords: "anagram word game letters rearrange puzzle", component: AnagramTool },
+  { id: "crossword", name: "Crossword Pattern Finder", description: "c_t finds cat, cut, cot — blanks matched against 1,600 words.", category: "writing", icon: Puzzle, keywords: "crossword pattern wordle helper blanks puzzle solver", badge: "new", component: CrosswordTool },
+  { id: "acronym", name: "Acronym Builder", description: "Light Amplification… becomes LASER. Three styles, one click.", category: "writing", icon: Type, keywords: "acronym initialism abbreviation name generator", component: AcronymTool },
+  { id: "typography-cleaner", name: "Typography Cleaner", description: "Smart quotes, real ellipses, trimmed spaces — paste mess, get polish.", category: "writing", icon: Quote, keywords: "typography quotes ellipsis dashes clean paste format", component: TypographyCleanerTool },
+  { id: "emoji-translate", name: "Emoji Translator", description: "Translates 60 common words to emoji and back — both directions.", category: "writing", icon: Smile, keywords: "emoji translator translate words pictogram", component: EmojiTranslateTool },
+  { id: "name-blend", name: "Name Blender", description: "Brad + Angelina → Brangelina. Couple names, brand mashups, pets.", category: "writing", icon: Merge, keywords: "blend names couple portmanteau mashup ship name", badge: "new", component: NameBlendTool },
+  { id: "username-gen", name: "Username Generator", description: "Four handle styles, nine at a time, one reroll button.", category: "writing", icon: AtSign, keywords: "username handle nickname generator gamertag", component: UsernameTool },
+  { id: "hashtags", name: "Hashtag Generator", description: "Pulls real keywords from your caption and builds a tag cloud.", category: "writing", icon: Ticket, keywords: "hashtag instagram social media tiktok tags", component: HashtagTool },
+  { id: "caption-format", name: "Caption Formatter", description: "Adds the dot-line breaks Instagram keeps swallowing.", category: "writing", icon: TextQuote, keywords: "instagram caption line breaks format social", component: CaptionFormatTool },
+  { id: "speech-timer", name: "Speech Timer", description: "Words ÷ pace = minutes on stage. Three pacing presets included.", category: "writing", icon: Timer, keywords: "speech timer toastmasters presentation words minutes talk", component: SpeechTimerTool },
+  { id: "homophones", name: "Homophone Checker", description: "Their/there/they're clashes that spellcheck happily ignores.", category: "writing", icon: BookOpen, keywords: "homophone their there grammar proofread spelling", component: HomophoneTool },
+  { id: "fancy-fonts", name: "Fancy Font Converter", description: "Bold, script, fraktur, circled — 12 unicode styles to copy.", category: "writing", icon: Brush, keywords: "fancy fonts unicode bold italic script instagram bio", badge: "new", component: FancyFontTool },
+  { id: "emphasis", name: "Emphasis Formatter", description: "aLt cApS, s p a c e d, clap👏mode and friends for one phrase.", category: "writing", icon: Bold, keywords: "alternating caps spaced sarcastic clap meme text", component: EmphasisTool },
+  { id: "letter-freq", name: "Letter Frequency X-Ray", description: "Which letters dominate your text — cipher-cracking grade bars.", category: "writing", icon: Activity, keywords: "letter frequency cipher cryptogram analysis", component: LetterFreqTool },
+  { id: "thread-splitter", name: "Thread Splitter", description: "Long rant in, numbered X-style posts out, each under the limit.", category: "writing", icon: Scissors, keywords: "thread twitter posts split 280 characters", badge: "new", component: ThreadSplitterTool },
+
+  // ================ Dev & Code ================
+  { id: "jwt-decoder", name: "JWT Decoder", description: "Splits tokens into header + payload + expiry — fully offline.", category: "devkit", icon: FileKey, keywords: "jwt token decode auth header payload exp", badge: "new", component: JwtDecoderTool },
+  { id: "query-params", name: "Query Param Parser", description: "Every parameter of a URL pulled apart into clean key/value rows.", category: "devkit", icon: Link, keywords: "url query params parse utm debug", component: QueryParamsTool },
+  { id: "ua-parser", name: "User Agent Parser", description: "Browser, engine, OS, bot-ness — decoded from the UA string.", category: "devkit", icon: MonitorSmartphone, keywords: "user agent parse browser os device debug", component: UaParserTool },
+  { id: "http-status", name: "HTTP Status Cheat Sheet", description: "18 codes explained like a mentor would, filterable by class.", category: "devkit", icon: Info, keywords: "http status codes 404 500 301 rest api reference", badge: "new", component: HttpStatusTool },
+  { id: "keycode", name: "Keycode Detector", description: "Press any key — get key, code, keyCode and modifiers, live.", category: "devkit", icon: Keyboard, keywords: "keycode keydown javascript event debug keyboard", badge: "new", component: KeycodeTool },
+  { id: "placeholder-img", name: "Placeholder Image Builder", description: "Design placeholder URLs with size, label and colors — live preview.", category: "devkit", icon: Aperture, keywords: "placeholder image dummy mockup url builder", component: PlaceholderUrlTool },
+  { id: "svg-optimizer", name: "SVG Optimizer", description: "Strips comments, metadata and junk whitespace from SVGs safely.", category: "devkit", icon: Minimize2, keywords: "svg optimize minify clean compress vector", component: SvgOptimizerTool },
+  { id: "favicon-grab", name: "Favicon Grabber", description: "Any site's favicon in 4 sizes from 3 public CDNs, instantly.", category: "devkit", icon: Star, keywords: "favicon grabber icon website logo fetch", badge: "new", component: FaviconGrabTool },
+  { id: "nano-id", name: "Nano ID Generator", description: "Short, URL-safe crypto-random IDs — UUID's nimbler sibling.", category: "devkit", icon: Dna, keywords: "nano id generator uuid short random identifier", component: NanoIdTool },
+  { id: "html-entities", name: "HTML Entity Encoder", description: "Escapes &lt; &amp; &quot; and back — paste-safe HTML anywhere.", category: "devkit", icon: Code, keywords: "html entities escape encode decode special characters", component: HtmlEntitiesTool },
+  { id: "url-parser", name: "URL Anatomist", description: "Protocol, host, port, path, fragment — every part labeled.", category: "devkit", icon: Route, keywords: "url parse anatomy parts host port path fragment", component: UrlParserTool },
+  { id: "md-toc", name: "Markdown TOC Builder", description: "Generates linked table-of-contents from your headings, GitHub style.", category: "devkit", icon: List, keywords: "markdown toc table of contents headings links readme", badge: "new", component: MarkdownTocTool },
+  { id: "js-minify", name: "JS Comment Stripper", description: "Safe conservative minify: comments and indentation only, never logic.", category: "devkit", icon: FileDigit, keywords: "javascript minify strip comments compress", component: JsMinifyTool },
+  { id: "css-specificity", name: "CSS Specificity Meter", description: "(ids, classes, elements) tuple for any selector — why your rule loses.", category: "devkit", icon: Crosshair, keywords: "css specificity selector cascade weight", component: SpecificityTool },
+  { id: "git-cheatsheet", name: "Git Cheat Sheet", description: "18 life-saving commands, searchable, with plain-English explanations.", category: "devkit", icon: GitBranch, keywords: "git commands cheat sheet revert stash rebase", badge: "new", component: GitCheatTool },
+  { id: "semver", name: "SemVer Comparator", description: "Which version is newer — 1.10 vs 1.2 settled without guesswork.", category: "devkit", icon: ArrowUpNarrowWide, keywords: "semver version compare release major minor patch", component: SemVerTool },
+  { id: "chmod", name: "Chmod Calculator", description: "Click permissions, get the octal — 755, 644 and everything between.", category: "devkit", icon: Lock, keywords: "chmod permissions octal linux unix file", component: ChmodTool },
+  { id: "ascii-table", name: "ASCII Table Browser", description: "All 95 printable characters with decimal + hex, searchable.", category: "devkit", icon: Table, keywords: "ascii table character code decimal hex unicode", component: AsciiTableTool },
+  { id: "bitwise", name: "Bitwise Playground", description: "AND, OR, XOR, shifts — with live binary views of every operand.", category: "devkit", icon: CircuitBoard, keywords: "bitwise and or xor shift binary operations", badge: "new", component: BitwiseTool },
+  { id: "device-info", name: "Device Inspector", description: "Viewport, DPR, CPU threads, GPU, timezone — what sites see on arrival.", category: "devkit", icon: Smartphone, keywords: "device info screen viewport gpu fingerprint debug", badge: "new", component: DeviceInfoTool },
+  { id: "shortcut-recorder", name: "Shortcut Recorder", description: "Press your dream key combo, get the JavaScript condition for it.", category: "devkit", icon: Command, keywords: "keyboard shortcut recorder javascript event combo", badge: "new", component: ShortcutRecorderTool },
+  { id: "port-lookup", name: "Port Lookup", description: "22 well-known ports decoded — what's on 5432 again?", category: "devkit", icon: Plug, keywords: "port numbers lookup network services mysql ssh", component: PortTool },
+
+  // ================ Data & Files ================
+  { id: "csv-to-json", name: "CSV → JSON", description: "Spreadsheet rows become clean JSON objects, headers optional.", category: "data", icon: Braces, keywords: "csv json convert parse transform data", badge: "new", component: CsvToJsonTool },
+  { id: "json-to-csv", name: "JSON → CSV", description: "Array of objects to comma-separated rows, ready for Excel.", category: "data", icon: Sheet, keywords: "json csv convert export excel spreadsheet", badge: "new", component: JsonToCsvTool },
+  { id: "csv-cleaner", name: "CSV Cleaner", description: "Dedupes rows, drops empties, trims cells — one pass.", category: "data", icon: Eraser, keywords: "csv clean dedupe trim empty rows tidy", component: CsvCleanerTool },
+  { id: "transpose", name: "Table Transposer", description: "Rows become columns, columns become rows — the 12-click move.", category: "data", icon: FlipVertical2, keywords: "transpose flip rows columns table", component: TransposeTool },
+  { id: "dedupe-lines", name: "Duplicate Line Remover", description: "Kills repeated lines with live counts of what survived.", category: "data", icon: CopyX, keywords: "duplicate lines remove unique dedupe text", component: DedupeTool },
+  { id: "sort-lines", name: "Natural Line Sorter", description: "A→Z, numeric, by length or shuffle — item2 stays before item10.", category: "data", icon: ArrowDownWideNarrow, keywords: "sort lines alphabetical numeric natural shuffle", component: SortLinesTool },
+  { id: "column-extract", name: "Column Extractor", description: "Pull column N out of any delimited text, delimiters included.", category: "data", icon: PanelRight, keywords: "column extract csv delimited field pick", component: ColumnTool },
+  { id: "delimiter-convert", name: "Delimiter Converter", description: "CSV ↔ TSV ↔ pipe ↔ semicolon, lossless both ways.", category: "data", icon: ArrowLeftRight, keywords: "delimiter convert csv tsv pipe semicolon", component: DelimConvertTool },
+  { id: "md-table", name: "Markdown Table Maker", description: "Raw rows in, perfectly formatted markdown table out.", category: "data", icon: TableProperties, keywords: "markdown table generator readme github", component: MdTableTool },
+  { id: "number-stats", name: "Number Cruncher", description: "Paste numbers anywhere — mean, median, mode, stddev appear.", category: "data", icon: Sigma, keywords: "statistics mean median mode stddev numbers math", badge: "new", component: NumberStatsTool },
+  { id: "anonymizer", name: "Data Anonymizer", description: "Masks emails, phones, cards and IPs before you share that doc.", category: "data", icon: VenetianMask, keywords: "anonymize mask pii emails phone cards privacy", badge: "new", component: AnonymizerTool },
+  { id: "email-extract", name: "Email Extractor", description: "Pulls every address from messy text, with domain census.", category: "data", icon: Mail, keywords: "email extract addresses scrape leads harvest", component: EmailExtractorTool },
+  { id: "url-extract", name: "URL Extractor", description: "All links out of any text, plus a domain-by-count census.", category: "data", icon: Compass, keywords: "url extract links scrape harvest domains", component: UrlExtractorTool },
+  { id: "ip-extract", name: "IP Extractor", description: "Valid IPv4s pulled from logs, sorted into A/B/C classes.", category: "data", icon: MapPin, keywords: "ip address extract logs ipv4 network class", component: IpExtractorTool },
+  { id: "freq-cloud", name: "Frequency Cloud", description: "Word cloud where size = frequency — hover for exact counts.", category: "data", icon: Cloud, keywords: "word cloud frequency tag text visualization", badge: "new", component: FrequencyCloudTool },
+  { id: "sample-rows", name: "Random Row Sampler", description: "Fair lottery draw from your rows — giveaways, QA sampling.", category: "data", icon: Dices, keywords: "random sample rows pick giveaway raffle", component: SampleRowsTool },
+
+  // ================ Money & Finance ================
+  { id: "compound-interest", name: "Compound Interest", description: "Deposits + growth visualized — watch the free-money share climb.", category: "money", icon: TrendingUp, keywords: "compound interest investment savings growth deposit", badge: "new", component: CompoundInterestTool },
+  { id: "savings-goal", name: "Savings Goal Planner", description: "Target, stash, monthly top-up → honest calendar answer.", category: "money", icon: PiggyBank, keywords: "savings goal planner target months budget", component: SavingsGoalTool },
+  { id: "retirement", name: "Retirement Projector", description: "Nest egg at 65 + the monthly income it supports at 4%.", category: "money", icon: Armchair, keywords: "retirement nest egg 401k pension fire calculator", badge: "new", component: RetirementTool },
+  { id: "mortgage", name: "Mortgage Amortizer", description: "Monthly payment plus principal-paid bars for every 5 years.", category: "money", icon: Home, keywords: "mortgage amortization loan home payment interest", badge: "new", component: MortgageTool },
+  { id: "rent-vs-buy", name: "Rent vs Buy", description: "True cost comparison including equity — verdict over your horizon.", category: "money", icon: Building, keywords: "rent buy house compare equity mortgage", badge: "new", component: RentVsBuyTool },
+  { id: "salary-hourly", name: "Salary → Hourly", description: "Your real hourly rate after vacations — and your per-minute value.", category: "money", icon: BadgeDollarSign, keywords: "salary hourly wage rate convert annual", component: SalaryHourlyTool },
+  { id: "freelance-rate", name: "Freelance Rate Calc", description: "The minimum hourly that covers taxes, expenses and non-billable life.", category: "money", icon: Laptop, keywords: "freelance rate hourly consulting pricing billable", badge: "new", component: FreelanceRateTool },
+  { id: "budget-503020", name: "50/30/20 Budget", description: "Needs, wants, savings vs the classic split — with over-budget alarms.", category: "money", icon: PieChart, keywords: "budget 50 30 20 needs wants savings split", component: BudgetSplitTool },
+  { id: "rent-splitter", name: "Roommate Rent Split", description: "Weighted fairness: bigger room pays double, totals always match.", category: "money", icon: Users, keywords: "rent split roommate fair weights shared", component: RentSplitterTool },
+  { id: "subscription-audit", name: "Subscription Auditor", description: "Your monthly bleed in numbers — and the 5-year horror figure.", category: "money", icon: RefreshCw, keywords: "subscriptions audit recurring cost monthly yearly", badge: "new", component: SubscriptionAuditTool },
+  { id: "debt-snowball", name: "Debt Snowball", description: "Simulates smallest-first payoff month by month, interest included.", category: "money", icon: Snowflake, keywords: "debt snowball payoff credit loan avalanche", badge: "new", component: DebtSnowballTool },
+  { id: "card-minimum", name: "Minimum Payment Trap", description: "What 2% minimums really cost — months and interest, brutal math.", category: "money", icon: CreditCard, keywords: "credit card minimum payment interest trap debt", component: CardMinimumTool },
+  { id: "inflation", name: "Inflation Eater", description: "What your cash buys in N years — purchasing power, visualized.", category: "money", icon: TrendingDown, keywords: "inflation purchasing power money value years", component: InflationTool },
+  { id: "margin-markup", name: "Margin & Markup", description: "The 50% margin = 100% markup pair, computed both ways.", category: "money", icon: Store, keywords: "margin markup profit pricing retail business", component: MarginTool },
+  { id: "break-even", name: "Break-Even Point", description: "Units per month to cover fixed costs — plus the daily target.", category: "money", icon: Equal, keywords: "break even units fixed costs business startup", component: BreakEvenTool },
+  { id: "roi", name: "ROI Calculator", description: "Total return plus annualized rate — the honest comparison number.", category: "money", icon: Target, keywords: "roi return investment annualized gain", component: RoiTool },
+  { id: "crypto-profit", name: "Crypto P&L", description: "Buy, sell, fees and tax — what actually lands in your pocket.", category: "money", icon: Bitcoin, keywords: "crypto bitcoin profit loss fees tax calculator", component: CryptoProfitTool },
+  { id: "stock-average", name: "Stock Average Down", description: "Average cost across every buy, plus position P&L at any price.", category: "money", icon: LineChart, keywords: "stock average cost basis investing shares dca", component: StockAverageTool },
+  { id: "commission", name: "Commission Calculator", description: "Flat or tiered (2/5/8%) — paycheck with full build-up shown.", category: "money", icon: Coins, keywords: "commission sales tiered flat pay check", component: CommissionTool },
+  { id: "overtime", name: "Overtime Pay", description: "Regular + 1.5× + double-time layers, stacked transparently.", category: "money", icon: Hourglass, keywords: "overtime pay double time wage hours work", component: OvertimeTool },
+
+  // ================ Life & Home ================
+  { id: "recipe-scaler", name: "Recipe Scaler", description: "Serves 4 → serves 9 automatically — first number on each line scales.", category: "life", icon: CookingPot, keywords: "recipe scale servings cooking multiply portions", badge: "new", component: RecipeScalerTool },
+  { id: "cooking-converter", name: "Cooking Converter", description: "Cups, tbsp, tsp, ml, fl oz — plus gram weights for 5 ingredients.", category: "life", icon: Utensils, keywords: "cooking converter cups tablespoons ml grams baking", badge: "new", component: CookingConverterTool },
+  { id: "coffee-ratio", name: "Coffee Ratio Calc", description: "1:12 to 1:18 — exactly how many grams to grind for your water.", category: "life", icon: Coffee, keywords: "coffee ratio grind brew pour over french press", component: CoffeeRatioTool },
+  { id: "pasta-portion", name: "Pasta Portioner", description: "Grams per hungry mouth, plus the no-scale bundle trick.", category: "life", icon: Wheat, keywords: "pasta portion grams spaghetti serving cooking", component: PastaPortionTool },
+  { id: "grocery-budget", name: "Grocery Estimator", description: "Weekly food budget from people × meals × style, three tiers.", category: "life", icon: ShoppingCart, keywords: "grocery budget food shopping weekly estimate", component: GroceryEstimatorTool },
+  { id: "meal-planner", name: "Weekly Meal Planner", description: "Seven-day grid that auto-saves on your device — dish, day, done.", category: "life", icon: CalendarDays, keywords: "meal planner weekly menu dinner plan saved", badge: "new", component: MealPlannerTool },
+  { id: "cleaning-schedule", name: "Cleaning Scheduler", description: "Chores sorted by urgency with done-timers — your cleaning brain.", category: "life", icon: SprayCan, keywords: "cleaning schedule chores house rotate urgent", badge: "new", component: CleaningScheduleTool },
+  { id: "laundry-symbols", name: "Laundry Symbol Decoder", description: "Tag hieroglyphs translated: wash, bleach, dry, iron.", category: "life", icon: Shirt, keywords: "laundry symbols care label wash dry iron decode", component: LaundryTool },
+  { id: "plant-watering", name: "Plant Watering Tracker", description: "Thirsty plants glow amber — watering timers per plant, auto-saved.", category: "life", icon: Sprout, keywords: "plant watering tracker houseplant garden reminder", badge: "new", component: PlantWateringTool },
+  { id: "paint-coverage", name: "Paint Calculator", description: "Wall area minus doors and windows → liters and cans to buy.", category: "life", icon: Paintbrush, keywords: "paint coverage wall area room liters cans", component: PaintTool },
+  { id: "moving-boxes", name: "Moving Box Estimator", description: "Rooms + people + hoard level = box count, split by size.", category: "life", icon: Package, keywords: "moving boxes estimate relocate pack house", component: MovingBoxesTool },
+  { id: "tv-distance", name: "TV Size & Distance", description: "Sweet-spot viewing distance for any screen size, 1080p vs 4K.", category: "life", icon: Tv, keywords: "tv size viewing distance 4k screen sofa", component: TvTool },
+  { id: "fuel-splitter", name: "Road Trip Cost Split", description: "Fuel burn + wear over riders — everyone's fair share, to the cent.", category: "life", icon: Fuel, keywords: "fuel cost road trip split gas car share", component: FuelSplitterTool },
+  { id: "packing-list", name: "Packing List Builder", description: "Trip-type starter lists + custom items, checkboxes that persist.", category: "life", icon: Backpack, keywords: "packing list travel vacation checklist trip", badge: "new", component: PackingTool },
+  { id: "meeting-cost", name: "Meeting Cost Meter", description: "Attendees × minutes × salaries — the price tag on that weekly sync.", category: "life", icon: Presentation, keywords: "meeting cost attendees salary waste calendar", badge: "new", component: MeetingCostTool },
+  { id: "gift-budget", name: "Gift Budget Splitter", description: "60/40 rule between the inner circle and everyone else.", category: "life", icon: Gift, keywords: "gift budget christmas holidays split presents", component: GiftBudgetTool },
+  { id: "party-food", name: "Party Food Calculator", description: "Snacks, mains and drinks per guest per hour — plus ice, always.", category: "life", icon: PartyPopper, keywords: "party food drinks guests hosting calculator", component: PartyFoodTool },
+  { id: "bill-splitter", name: "Utility Bill Splitter", description: "Split by real usage weights, not just heads — with equalize button.", category: "life", icon: Receipt, keywords: "bills split utilities electricity usage housemates", component: BillSplitterTool },
+  { id: "baby-age", name: "Baby Age Tracker", description: "Days, weeks, months + milestone radar for the memory book.", category: "life", icon: Baby, keywords: "baby age weeks months milestones newborn tracker", badge: "new", component: BabyAgeTool },
+  { id: "pet-portion", name: "Pet Portion Calc", description: "Dog or cat calories from weight, body condition and activity.", category: "life", icon: PawPrint, keywords: "pet food portion dog cat calories feeding", component: PetPortionTool },
+  { id: "sleep-cycles", name: "Sleep Cycle Planner", description: "Bedtimes that end on a 90-minute boundary — wake up human.", category: "life", icon: Moon, keywords: "sleep cycles bedtime wake calculator rem", badge: "new", component: SleepCycleTool },
+
+  // ================ Study & Brain ================
+  { id: "flashcards", name: "Flashcard Deck", description: "Leitner-box spaced flip cards that auto-save — build a deck in seconds.", category: "study", icon: BookMarked, keywords: "flashcards study memorize leitner deck learn", badge: "unique", component: FlashcardsTool },
+  { id: "spaced-repetition", name: "Spaced Repetition Ladder", description: "1-3-7-14-30-60 review dates from any study day.", category: "study", icon: History, keywords: "spaced repetition review schedule memory anki", badge: "new", component: SpacedRepetitionTool },
+  { id: "gpa", name: "GPA Calculator", description: "Credit-weighted GPA from courses and letter grades, live.", category: "study", icon: GraduationCap, keywords: "gpa grades credits college university calculator", component: GpaTool },
+  { id: "grade-needed", name: "Final Exam Target", description: "What you need on the final — including the >100% honesty check.", category: "study", icon: Flag, keywords: "grade needed final exam target score", badge: "new", component: GradeNeededTool },
+  { id: "reading-speed", name: "Reading Speed Test", description: "Built-in passage, built-in timer, honest wpm at the end.", category: "study", icon: BookOpen, keywords: "reading speed wpm test words per minute", component: ReadingSpeedTool },
+  { id: "assignment-planner", name: "Assignment Planner", description: "Due date + hours → your daily work budget, panic flags included.", category: "study", icon: ClipboardList, keywords: "assignment planner homework deadline study schedule", badge: "new", component: AssignmentPlannerTool },
+  { id: "cornell-notes", name: "Cornell Notes Maker", description: "Notes in, auto-drafted cue questions and 2-line summary out.", category: "study", icon: PenLine, keywords: "cornell notes study method questions summary", badge: "new", component: CornellTool },
+  { id: "citation-gen", name: "Citation Generator", description: "APA 7, MLA 9, Chicago — from raw fields, formatted instantly.", category: "study", icon: Library, keywords: "citation apa mla chicago bibliography reference", component: CitationTool },
+  { id: "mnemonic", name: "Mnemonic Maker", description: "HOMES → happy otter meadow ember summit. Spin until it sticks.", category: "study", icon: Lightbulb, keywords: "mnemonic acrostic memory trick acronym study", badge: "new", component: MnemonicTool },
+  { id: "times-table", name: "Times Table Explorer", description: "12×12 grid for any focus number, with the patterns pointed out.", category: "study", icon: LayoutGrid, keywords: "multiplication table times math kids explore", component: TimesTableTool },
+  { id: "prime-factors", name: "Prime Factorizer", description: "360 = 2³×3²×5 — factors, distinct primes, digit sums.", category: "study", icon: Hash, keywords: "prime factors factorization math number theory", component: PrimeTool },
+  { id: "quadratic", name: "Quadratic Solver", description: "Discriminant, real or complex roots, vertex — full work shown.", category: "study", icon: Divide, keywords: "quadratic equation roots discriminant vertex algebra", component: QuadraticTool },
+  { id: "triangle-solver", name: "Triangle Solver", description: "Three sides → area, angles by law of cosines, type verdict.", category: "study", icon: Triangle, keywords: "triangle solver area angles heron cosine geometry", component: TriangleTool },
+  { id: "probability", name: "Probability Lab", description: "Theoretical odds vs live Monte Carlo simulation — up to 100k rolls.", category: "study", icon: Dices, keywords: "probability dice monte carlo simulation odds math", badge: "new", component: ProbabilityTool },
+  { id: "scientific-calc", name: "Scientific Calculator", description: "Trig, roots, powers, pi — with a running history tape.", category: "study", icon: Calculator, keywords: "scientific calculator trig sqrt log math", badge: "new", component: SciCalcTool },
+  { id: "graph-plotter", name: "Graph Plotter", description: "Type y=f(x), get a live canvas plot — presets one tap away.", category: "study", icon: Spline, keywords: "graph plotter function plot math visualize canvas", badge: "new", component: GraphPlotterTool },
+  { id: "periodic-table", name: "Element Lookup", description: "34 most-looked-up elements with symbols and atomic masses.", category: "study", icon: Atom, keywords: "periodic table elements chemistry atomic symbol", component: PeriodicTool },
+  { id: "typing-test", name: "Typing Speed Test", description: "Per-character coloring, live wpm and accuracy — starts on first key.", category: "study", icon: Keyboard, keywords: "typing test wpm speed accuracy keyboard practice", badge: "new", component: TypingTestTool },
+
+  // ================ Health & Body ================
+  { id: "tdee", name: "Calorie Needs (TDEE)", description: "BMR + activity → maintain, lose or gain targets in kcal.", category: "health", icon: Flame, keywords: "tdee calories bmr maintenance weight loss", badge: "new", component: TdeeTool },
+  { id: "macros", name: "Macro Splitter", description: "Carbs, protein, fat grams from calories and your diet style.", category: "health", icon: PieChart, keywords: "macros protein carbs fat grams diet split", badge: "new", component: MacroTool },
+  { id: "body-fat", name: "Body Fat Estimate", description: "US Navy tape method — height, neck, waist (hips), done.", category: "health", icon: Weight, keywords: "body fat navy tape method estimate fitness", component: BodyFatTool },
+  { id: "ideal-weight", name: "Ideal Weight Band", description: "Honest BMI band plus the classic formulas for reference.", category: "health", icon: Ruler, keywords: "ideal weight bmi band range devine hamwi", component: IdealWeightTool },
+  { id: "protein-needs", name: "Protein Target", description: "Grams per day by goal — translated into actual food amounts.", category: "health", icon: Salad, keywords: "protein grams daily fitness muscle food", component: ProteinTool },
+  { id: "one-rep-max", name: "One Rep Max", description: "Epley + Brzycki estimates with training-percentage plates.", category: "health", icon: Dumbbell, keywords: "one rep max 1rm lifting strength gym epley", badge: "new", component: OneRepMaxTool },
+  { id: "running-pace", name: "Running Pace", description: "Distance + time → pace, speed and race benchmarks at that pace.", category: "health", icon: Footprints, keywords: "running pace speed marathon 5k race", badge: "new", component: PaceTool },
+  { id: "race-predictor", name: "Race Time Predictor", description: "Riegel formula — same effort projected across 5K to marathon.", category: "health", icon: Medal, keywords: "race predictor riegel marathon half 10k time", component: RacePredictTool },
+  { id: "steps-converter", name: "Steps → Distance", description: "Steps to km, calories and walking time from your height.", category: "health", icon: Watch, keywords: "steps distance calories walking pedometer convert", component: StepsTool },
+  { id: "fasting-window", name: "Fasting Window Planner", description: "16:8, 18:6, 20:4 — eat/fast timeline from your first bite.", category: "health", icon: Timer, keywords: "intermittent fasting window 16 8 if schedule", component: FastingTool },
+  { id: "due-date", name: "Pregnancy Due Date", description: "Naegele estimate with progress meter and trimester tracking.", category: "health", icon: Heart, keywords: "pregnancy due date naegele weeks trimester baby", badge: "new", component: DueDateTool },
+  { id: "hr-zones", name: "Heart Rate Zones", description: "Karvonen zones Z1–Z5 from age and resting HR, in bpm.", category: "health", icon: HeartPulse, keywords: "heart rate zones karvonen training bpm cardio", badge: "new", component: HrZonesTool },
+  { id: "interval-timer", name: "Interval Timer", description: "Work/rest/rounds HIIT timer with phase colors and progress pips.", category: "health", icon: Play, keywords: "interval timer hiit tabata workout rounds", badge: "new", component: IntervalTimerTool },
+  { id: "medicine-schedule", name: "Medicine Reminder", description: "Daily med checklist that resets at midnight — stored on-device.", category: "health", icon: Pill, keywords: "medicine reminder pills schedule daily medication", badge: "new", component: MedicineTool },
+
+  // ================ Fun & Weird ================
+  { id: "zodiac", name: "Zodiac Sign", description: "Western star sign from birthday, with trait one-liners for all 12.", category: "fun", icon: Stars, keywords: "zodiac star sign horoscope birthday astrology", component: ZodiacTool },
+  { id: "chinese-zodiac", name: "Chinese Zodiac", description: "Animal + element from birth year — the 12-creature grid.", category: "fun", icon: Orbit, keywords: "chinese zodiac animal element year lunar", component: ChineseZodiacTool },
+  { id: "name-compat", name: "Name Compatibility", description: "Deterministic nonsense percentage — same names, same verdict, forever.", category: "fun", icon: Heart, keywords: "love compatibility names couple fun test", badge: "new", component: NameCompatTool },
+  { id: "would-you-rather", name: "Would You Rather", description: "10 curated impossible dilemmas — draw cards for the group.", category: "fun", icon: ArrowLeftRight, keywords: "would you rather game party questions dilemmas", component: WouldYouRatherTool },
+  { id: "truth-or-dare", name: "Truth or Dare", description: "Truth and dare decks, tap to draw, house rules included.", category: "fun", icon: MessageCircle, keywords: "truth dare party game questions dares", component: TruthDareTool },
+  { id: "never-have-i-ever", name: "Never Have I Ever", description: "Confession starters for the group chat or the couch.", category: "fun", icon: Hand, keywords: "never have i ever party game confessions", component: NeverHaveIEverTool },
+  { id: "ice-breakers", name: "Ice Breaker Questions", description: "Five opening questions that skip the weather, instantly.", category: "fun", icon: Snowflake, keywords: "ice breaker questions team meeting party start", component: IceBreakerTool },
+  { id: "story-prompts", name: "Story Prompt Machine", description: "Character + impossible errand + absurd venue. Twists included.", category: "fun", icon: Feather, keywords: "story prompt writing ideas creative generator", badge: "new", component: StoryPromptTool },
+  { id: "band-names", name: "Band / Team / Startup", description: "Velvet Cactus? Thunder Kraken? Loopbase? One generator, three vibes.", category: "fun", icon: Music, keywords: "band name generator team startup brand random", badge: "new", component: BandNameTool },
+  { id: "shakespearean", name: "Shakespearean Insulter", description: "Thou beslubbering fen-sucked canker-blossom! (Compliments too.)", category: "fun", icon: PenTool, keywords: "shakespeare insult compliment generator elizabethan fun", badge: "new", component: ShakespeareTool },
+  { id: "magic-8-ball", name: "Magic 8 Ball", description: "Shake the orb, receive wisdom. 12 answers, zero accountability.", category: "fun", icon: CircleDot, keywords: "magic 8 ball fortune yes no shake oracle", component: Magic8Tool },
+  { id: "lottery-gen", name: "Lucky Numbers", description: "Lottery lines for any pool and draw size — sorted, ball-styled.", category: "fun", icon: Gem, keywords: "lottery numbers generator lucky draw balls", component: LotteryTool },
+  { id: "rps", name: "Rock Paper Scissors", description: "Best-of CPU battles with a running scoreboard.", category: "fun", icon: Swords, keywords: "rock paper scissors game cpu rps play", component: RpsTool },
+  { id: "memory-game", name: "Memory Match", description: "Six emoji pairs, flip to match, move counter included.", category: "fun", icon: Brain, keywords: "memory match game pairs cards brain", component: MemoryGameTool },
+  { id: "reaction-test", name: "Reaction Time Test", description: "Green-light reflex tester with personal best tracking.", category: "fun", icon: Zap, keywords: "reaction time test reflex ms speed game", badge: "new", component: ReactionTool },
+  { id: "aim-trainer", name: "Aim Trainer", description: "Ten random targets — average click-to-click time decides your rank.", category: "fun", icon: Crosshair, keywords: "aim trainer targets click fps practice game", component: AimTrainerTool },
+  { id: "cps-test", name: "Click Speed (CPS)", description: "Five seconds, infinite clicks — ranked from casual to butterfly legend.", category: "fun", icon: MousePointerClick, keywords: "cps click speed test clicks per second game", component: CpsTool },
+  { id: "emoji-story", name: "Emoji Plot Generator", description: "Nine random emoji that absolutely tell a story. You decide which.", category: "fun", icon: Ghost, keywords: "emoji story random plot generator social fun", component: EmojiStoryTool },
+
+  // ================ Security & Web ================
+  { id: "password-audit", name: "Password Auditor", description: "Entropy + real-world crack time + structural flaws, typed locally.", category: "websec", icon: ShieldCheck, keywords: "password strength audit entropy crack security check", badge: "new", component: PasswordAuditTool },
+  { id: "phishing-check", name: "Phishing URL Analyzer", description: "Lookalike brands, raw IPs, urgency keywords — risk score before you click.", category: "websec", icon: ShieldAlert, keywords: "phishing url check scam suspicious link analyze", badge: "unique", component: PhishingTool },
+  { id: "aes-vault", name: "AES-256 Text Vault", description: "Real WebCrypto AES-GCM encryption with a password — nothing leaves.", category: "websec", icon: Key, keywords: "aes encrypt decrypt gcm password vault secure", badge: "unique", component: AesVaultTool },
+  { id: "passphrase", name: "Passphrase Generator", description: "Diceware-style word phrases — memorable AND 60+ bits of entropy.", category: "websec", icon: KeyRound, keywords: "passphrase diceware words password generator memorable", badge: "new", component: PassphraseTool },
+  { id: "totp", name: "2FA Code Generator", description: "RFC-6238 TOTP from your secret — a full authenticator app, reimplemented.", category: "websec", icon: Smartphone, keywords: "totp 2fa authenticator otp code hmac token", badge: "unique", component: TotpTool },
+  { id: "dns-lookup", name: "DNS Lookup (DoH)", description: "A, AAAA, MX, TXT, NS, CNAME via Google DNS-over-HTTPS — keyless.", category: "websec", icon: Server, keywords: "dns lookup doh records mx txt aaaa nameserver", badge: "new", component: DnsTool },
+  { id: "security-checklist", name: "Security Self-Audit", description: "8 checks covering 95% of personal account risk — score yourself.", category: "websec", icon: Shield, keywords: "security checklist audit 2fa passwords backup hygiene", badge: "new", component: SecurityChecklistTool },
+  { id: "browser-features", name: "Browser Feature Detector", description: "16 capabilities tested live — the real environment your users have.", category: "websec", icon: Chrome, keywords: "browser features detection webgl webrtc support debug", component: BrowserDetectTool },
+  { id: "privacy-policy", name: "Privacy Policy Generator", description: "Honest minimal-data policy skeleton tuned by three checkboxes.", category: "websec", icon: FileText, keywords: "privacy policy generator gdpr template legal website", badge: "new", component: PrivacyPolicyTool },
+  { id: "robots-txt", name: "robots.txt Generator", description: "Crawl rules + sitemap reference — drop at your root, done.", category: "websec", icon: Bot, keywords: "robots txt generator seo crawler disallow sitemap", component: RobotsTool },
+  { id: "json-ld", name: "JSON-LD Schema Builder", description: "WebSite, Article, Product, FAQ structured data for rich results.", category: "websec", icon: FileJson, keywords: "json ld schema org structured data seo rich results", badge: "new", component: JsonLdTool },
+  { id: "email-signature", name: "Email Signature Builder", description: "Plain text + sanitized HTML versions, ready for Gmail or Outlook.", category: "websec", icon: MailCheck, keywords: "email signature builder html gmail outlook", badge: "new", component: EmailSignatureTool },
+  { id: "ooo-message", name: "Out-of-Office Writer", description: "Corporate, warm or blunt vacation auto-replies in one click.", category: "websec", icon: PlaneTakeoff, keywords: "out of office vacation auto reply email generator", badge: "new", component: OooTool },
+  { id: "domain-brain", name: "Domain Brainstormer", description: "Prefix/suffix remixing around your seed word, with TLD ideas.", category: "websec", icon: Search, keywords: "domain name ideas brainstorm tld startup brand", component: DomainBrainTool },
+  { id: "font-preview", name: "Web-Safe Font Preview", description: "Ten system fonts side by side with your text, size-controlled.", category: "websec", icon: Type, keywords: "font preview web safe system typography compare", component: FontPreviewTool },
+  { id: "sitemap-xml", name: "Sitemap XML Builder", description: "Valid sitemap.xml from your URL list — ready for Search Console.", category: "websec", icon: Map, keywords: "sitemap xml generator seo urls search console", badge: "new", component: SitemapTool },
+
+  // ================ Extras — rapid-fire utilities ================
+  { id: "morse-code", name: "Morse Code Translator", description: "Text ↔ Morse both ways, SOS certified since 1906.", category: "writing", icon: Radio, keywords: "morse code translate dots dashes sos radio", badge: "new", component: MorseTool },
+  { id: "caesar-cipher", name: "Caesar Cipher", description: "ROT-N encoder plus a brute-force panel of all 25 shifts.", category: "writing", icon: Binary, keywords: "caesar cipher rot13 shift decode encrypt puzzle", badge: "new", component: CaesarTool },
+  { id: "nato-alphabet", name: "NATO Alphabet", description: "Spell any word the way pilots and support hotlines do.", category: "writing", icon: Radio, keywords: "nato phonetic alphabet spell alfa bravo charlie", component: NatoTool },
+  { id: "text-repeater", name: "Text Repeater", description: "One phrase, up to 500 copies, three separators — memes await.", category: "writing", icon: Repeat, keywords: "repeat text copies spam meme multiply", component: RepeaterTool },
+  { id: "syllables", name: "Syllable Counter", description: "Vowel-group syllable estimates with 4+-syllable word shaming.", category: "writing", icon: TextQuote, keywords: "syllable counter haiku rap poem words", badge: "new", component: SyllableTool },
+  { id: "birthday-paradox", name: "Birthday Paradox", description: "How many people until two share a birthday? Fewer than you think.", category: "study", icon: Cake, keywords: "birthday paradox probability collision math fun", badge: "new", component: BirthdayTool },
+  { id: "group-splitter", name: "Random Group Splitter", description: "Paste names, choose group count, fair shuffle every time.", category: "study", icon: Users, keywords: "random group splitter teams classroom students shuffle", badge: "new", component: GroupSplitterTool },
+  { id: "reading-time", name: "Reading Time Estimator", description: "Paste an article — get the “N min read” badge before publishing.", category: "writing", icon: BookOpen, keywords: "reading time estimate blog article minutes words", component: ReadingTimeTool },
+  { id: "duration-adder", name: "Duration Adder", description: "Sum h:mm:ss lines — playlists, timelines, workouts totaled.", category: "data", icon: Timer, keywords: "add durations time sum hours minutes playlist", badge: "new", component: DurationTool },
+  { id: "px-rem", name: "Px ↔ Rem Converter", description: "Pixel to rem at any root size — accessibility-friendly CSS.", category: "css", icon: Ruler, keywords: "px rem converter css units accessibility", component: PxRemTool },
+  { id: "simple-interest", name: "Simple Interest", description: "The flat P×R×T formula — loans, IOUs and classroom math.", category: "money", icon: Coins, keywords: "simple interest principal rate flat loan", component: SimpleInterestTool },
+  { id: "gas-vs-ev", name: "Gas vs EV Cost", description: "Petrol burn vs electricity per year — the real running-cost gap.", category: "money", icon: Fuel, keywords: "gas ev electric car cost compare fuel savings", badge: "new", component: GasVsEvTool },
+  { id: "week-number", name: "ISO Week Number", description: "Any date → week number, week range, day-of-year, leap status.", category: "time", icon: CalendarDays, keywords: "week number iso calendar date day of year leap", component: WeekNumberTool },
 ];
 
 export const TOOL_COUNT = TOOLS.length;
