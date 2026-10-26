@@ -66,3 +66,8 @@ agent-ctx/
 bun.lock.bak
 tool-results/
 dev.log
+skills/
+upload/
+verify_*.png
+qm_*.html
+scripts/
