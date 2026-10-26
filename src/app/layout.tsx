@@ -30,9 +30,9 @@ const archivoBlack = Archivo_Black({
 });
 
 export const metadata: Metadata = {
-  title: "zyric.tech — 255 Free Online Tools. Zero Servers.",
+  title: "zyric.tech — 350 Free Online Tools. Zero Servers.",
   description:
-    "A junk drawer of 255 free browser tools across 21 shelves: writing & readability, dev utilities, data & CSV surgery, money & finance, home & life, study & brain trainers, health calculators, security with real WebCrypto (AES vault, TOTP, phishing checks) and party games — plus CSS generators, notes, trackers, converters, image & color tools and invoices. No uploads, no sign-ups, everything runs on your device.",
+    "A junk drawer of 350 free browser tools across 21 shelves: writing & readability, dev utilities, data & CSV surgery, money & finance, home & life, study & brain trainers, health calculators, security with real WebCrypto (AES vault, TOTP, phishing checks) and party games — plus CSS generators, notes, trackers, converters, image & color tools and invoices. No uploads, no sign-ups, everything runs on your device.",
   keywords: [
     "free online tools",
     "web tools",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     "zyric",
   ],
   openGraph: {
-    title: "zyric.tech — 255 Free Online Tools. Zero Servers.",
+    title: "zyric.tech — 350 Free Online Tools. Zero Servers.",
     description:
       "255 free tools in one place — writing, dev, data, money, life, study, health, security and fun. Runs locally, no sign-up.",
     type: "website",

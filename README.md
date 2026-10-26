@@ -1,14 +1,14 @@
 # ZYRIC.TECH
 
-**75 free online tools. Zero servers. Zero uploads. Zero sign-ups.**
+**350 free online tools. Zero servers. Zero uploads. Zero sign-ups.**
 
-A junk-drawer of everyday tools that run **100% in your browser** — your files and data never leave your device. No accounts, no tracking, no "sign up to see your result" nonsense. Includes 9 **signature tools** you won't find on any other tool site.
+A junk-drawer of everyday tools that run **100% in your browser** — your files and data never leave your device. No accounts, no tracking, no "sign up to see your result" nonsense. Includes 10 **signature tools** you won't find on any other tool site.
 
 ![Zyric](public/logo.svg)
 
 ## Highlights
 
-- **75 working tools** across 12 categories
+- **350 working tools** across 21 categories
 - **100% client-side** — tools process everything locally (one optional API route powers the Website Launch Checker)
 - **Signature exclusives** — File Submission Checker, Before-You-Open File Inspector, Spreadsheet Health Inspector, Document Change Explainer, Batch File Renamer, Website Launch Readiness Checker, Personal Expiry Calendar, Project Handover Pack Builder, Privacy Scrubber
 - **Local persistence** — notes, trackers, expiry items and settings save to `localStorage`

@@ -267,40 +267,17 @@ import {
   SimpleInterestTool, DurationTool, ReadingTimeTool, PxRemTool, GroupSplitterTool,
   WeekNumberTool,
 } from "./kit-extras";
+import { textPlusMeta } from "./kit-textplus";
+import { imagePlusMeta } from "./kit-imageplus";
+import { convertPlusMeta } from "./kit-convertplus";
+import { calcPlusMeta } from "./kit-calcplus";
+import { devPlusMeta } from "./kit-devplus";
+import { seoPlusMeta } from "./kit-seoplus";
+import { socialMeta } from "./kit-social";
+import { lifePlusMeta } from "./kit-lifeplus";
+import type { ToolMeta, CategoryId } from "./tool-types";
 
-export interface ToolMeta {
-  id: string;
-  name: string;
-  description: string;
-  category: CategoryId;
-  icon: ComponentType<{ className?: string; strokeWidth?: number }>;
-  keywords: string;
-  badge?: "new" | "local" | "saved" | "unique";
-  component: ComponentType;
-}
-
-export type CategoryId =
-  | "signature"
-  | "notes"
-  | "trackers"
-  | "calculators"
-  | "converters"
-  | "time"
-  | "generators"
-  | "css"
-  | "media"
-  | "web"
-  | "business"
-  | "random"
-  | "writing"
-  | "devkit"
-  | "data"
-  | "money"
-  | "life"
-  | "study"
-  | "health"
-  | "fun"
-  | "websec";
+export type { ToolMeta, CategoryId } from "./tool-types";
 
 export const CATEGORIES: { id: CategoryId; label: string; icon: ComponentType<{ className?: string; strokeWidth?: number }>; blurb: string }[] = [
   {
@@ -1370,6 +1347,17 @@ export const TOOLS: ToolMeta[] = [
   { id: "simple-interest", name: "Simple Interest", description: "The flat P×R×T formula — loans, IOUs and classroom math.", category: "money", icon: Coins, keywords: "simple interest principal rate flat loan", component: SimpleInterestTool },
   { id: "gas-vs-ev", name: "Gas vs EV Cost", description: "Petrol burn vs electricity per year — the real running-cost gap.", category: "money", icon: Fuel, keywords: "gas ev electric car cost compare fuel savings", badge: "new", component: GasVsEvTool },
   { id: "week-number", name: "ISO Week Number", description: "Any date → week number, week range, day-of-year, leap status.", category: "time", icon: CalendarDays, keywords: "week number iso calendar date day of year leap", component: WeekNumberTool },
+
+  // ---------------- 2026 expansion fleet: text · image · converters · calculators ----------------
+  ...textPlusMeta,
+  ...imagePlusMeta,
+  ...convertPlusMeta,
+  ...calcPlusMeta,
+  // ---------------- 2026 expansion fleet: devkit · seo · social · life ----------------
+  ...devPlusMeta,
+  ...seoPlusMeta,
+  ...socialMeta,
+  ...lifePlusMeta,
 ];
 
 export const TOOL_COUNT = TOOLS.length;

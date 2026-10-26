@@ -497,7 +497,7 @@ export function RobotsTool() {
 export function JsonLdTool() {
   const A = accentOf(10);
   const [type, setType] = useState<"website" | "article" | "product" | "faq">("website");
-  const [f, setF] = useState({ name: "Zyric", url: "https://zyric.tech", desc: "75 free browser tools. No uploads, no sign-ups.", author: "Zyric Team", price: "0" });
+  const [f, setF] = useState({ name: "Zyric", url: "https://zyric.tech", desc: "350 free browser tools. No uploads, no sign-ups.", author: "Zyric Team", price: "0" });
   const json = useMemo(() => {
     const base = { "@context": "https://schema.org" };
     if (type === "website") return JSON.stringify({ ...base, "@type": "WebSite", name: f.name, url: f.url, description: f.desc }, null, 2);
