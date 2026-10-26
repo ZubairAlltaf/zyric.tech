@@ -493,7 +493,7 @@ export const TOOLS: ToolMeta[] = [
   {
     id: "file-renamer",
     name: "Batch File Renamer",
-    description: "Rename a whole folder of files in one pass — then download a tidy ZIP.",
+    description: "Type any new name directly per file, or bulk find & replace — downloads carry the exact name you chose.",
     category: "signature",
     icon: FileCog,
     keywords: "batch rename files bulk filename prefix suffix numbering case zip download camera photos",
