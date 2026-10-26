@@ -275,6 +275,13 @@ import { devPlusMeta } from "./kit-devplus";
 import { seoPlusMeta } from "./kit-seoplus";
 import { socialMeta } from "./kit-social";
 import { lifePlusMeta } from "./kit-lifeplus";
+import { creatorsMeta } from "./kit-creators";
+import { teachersMeta } from "./kit-teachers";
+import { tradesMeta } from "./kit-trades";
+import { outdoorMeta } from "./kit-outdoor";
+import { travelMeta } from "./kit-travel";
+import { hobbiesMeta } from "./kit-hobbies";
+import { moneyPlusMeta } from "./kit-moneyplus";
 import type { ToolMeta, CategoryId } from "./tool-types";
 
 export type { ToolMeta, CategoryId } from "./tool-types";
@@ -1358,6 +1365,15 @@ export const TOOLS: ToolMeta[] = [
   ...seoPlusMeta,
   ...socialMeta,
   ...lifePlusMeta,
+  // ---------------- research-verified wave: creators · teachers · trades · outdoor ----------------
+  ...creatorsMeta,
+  ...teachersMeta,
+  ...tradesMeta,
+  ...outdoorMeta,
+  // ---------------- research-verified wave: travel · hobbies · money ----------------
+  ...travelMeta,
+  ...hobbiesMeta,
+  ...moneyPlusMeta,
 ];
 
 export const TOOL_COUNT = TOOLS.length;
