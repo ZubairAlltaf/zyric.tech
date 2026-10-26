@@ -9,6 +9,7 @@ import {
   Command as CommandIcon,
   Dices,
   Menu,
+  Vault,
   X,
 } from "lucide-react";
 import {
@@ -23,6 +24,7 @@ import {
 import { CATEGORIES, TOOLS, TOOL_COUNT, type ToolMeta } from "./registry";
 import { CAT_COLORS, chipBase } from "./bruts";
 import { Home, Ticker } from "./home";
+import { VaultApp } from "./vault-app";
 import {
   CustomCursor,
   GrainOverlay,
@@ -88,11 +90,15 @@ function Nav({
   onOpenPalette,
   onOpenMenu,
   onSurprise,
+  side,
+  onVault,
 }: {
   onHome: () => void;
   onOpenPalette: () => void;
   onOpenMenu: () => void;
   onSurprise: () => void;
+  side: "tools" | "vault";
+  onVault: () => void;
 }) {
   const clicks = useRef(0);
   const clickTimer = useRef<number | null>(null);
@@ -148,17 +154,25 @@ function Nav({
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
           <button
             type="button"
-            onClick={() => jumpTo("headliners")}
+            onClick={() => { if (side === "vault") onHome(); jumpTo("headliners"); }}
             className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#FF7A3D] hover:decoration-[3px]"
           >
             <ScrambleText text="THE HEADLINERS" />
           </button>
           <button
             type="button"
-            onClick={() => jumpTo("toolbox")}
+            onClick={() => { if (side === "vault") onHome(); jumpTo("toolbox"); }}
             className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#C6F24E] hover:decoration-[3px]"
           >
             <ScrambleText text="THE TOOLBOX" />
+          </button>
+          <button
+            type="button"
+            onClick={onVault}
+            className={`brut-lift inline-flex items-center gap-1.5 border-2 border-[#141414] px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] ${side === "vault" ? "bg-[#C6F24E] text-[#141414]" : "bg-[#141414] text-[#F3EFE6] hover:bg-[#C6F24E] hover:text-[#141414]"}`}
+          >
+            <Vault className="h-3.5 w-3.5" strokeWidth={2.5} />
+            THE VAULT
           </button>
           <button
             type="button"
@@ -203,12 +217,16 @@ function MobileMenu({
   onHome,
   onSurprise,
   onCatJump,
+  onVault,
+  onTools,
 }: {
   open: boolean;
   onClose: () => void;
   onHome: () => void;
   onSurprise: () => void;
   onCatJump: (c: (typeof CATEGORIES)[number]["id"]) => void;
+  onVault: () => void;
+  onTools: () => void;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -273,8 +291,9 @@ function MobileMenu({
               className="flex flex-col gap-5"
             >
               {[
-                { label: "The Headliners", color: "#FFD43B", fn: () => jumpTo("headliners") },
-                { label: "The Whole Toolbox", color: "#F3EFE6", fn: () => jumpTo("toolbox") },
+                { label: "The Headliners", color: "#FFD43B", fn: () => { onTools(); jumpTo("headliners"); } },
+                { label: "The Whole Toolbox", color: "#F3EFE6", fn: () => { onTools(); jumpTo("toolbox"); } },
+                { label: "★ The Vault — Student Credits", color: "#C6F24E", fn: onVault },
                 { label: "Surprise Me", color: "#FF9DE2", fn: onSurprise },
               ].map((l) => (
                 <motion.button
@@ -504,6 +523,7 @@ export default function ZyricApp() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteMounted, setPaletteMounted] = useState(false);
   const [paletteQuery, setPaletteQuery] = useState("");
+  const [side, setSide] = useState<"tools" | "vault">("tools");
 
   const paletteResults = useMemo(() => rankTools(paletteQuery), [paletteQuery]);
 
@@ -527,6 +547,7 @@ export default function ZyricApp() {
   const goHome = useCallback(() => {
     setActiveToolId(null);
     setMenuOpen(false);
+    setSide("tools");
     scrollToTop();
   }, []);
 
@@ -535,6 +556,13 @@ export default function ZyricApp() {
     const pick = pool[Math.floor(Math.random() * pool.length)];
     if (pick) openTool(pick.id);
   }, [activeToolId, openTool]);
+
+  const openVault = useCallback(() => {
+    setActiveToolId(null);
+    setMenuOpen(false);
+    setSide("vault");
+    scrollToTop();
+  }, []);
 
   const catJump = useCallback(
     (c: (typeof CATEGORIES)[number]["id"]) => {
@@ -607,6 +635,8 @@ export default function ZyricApp() {
         onOpenPalette={openPalette}
         onOpenMenu={() => setMenuOpen(true)}
         onSurprise={surprise}
+        side={side}
+        onVault={openVault}
       />
 
       <AnimatePresence mode="wait">
@@ -617,6 +647,8 @@ export default function ZyricApp() {
             onBack={backToPile}
             onOpenTool={openTool}
           />
+        ) : side === "vault" ? (
+          <VaultApp key="vault" />
         ) : (
           <motion.div
             key="home"
@@ -646,6 +678,8 @@ export default function ZyricApp() {
         onHome={goHome}
         onSurprise={surprise}
         onCatJump={catJump}
+        onVault={openVault}
+        onTools={goHome}
       />
 
       {paletteMounted ? (
