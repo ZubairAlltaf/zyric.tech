@@ -8,6 +8,7 @@ import {
   Asterisk,
   Command as CommandIcon,
   Dices,
+  GraduationCap,
   Menu,
   Vault,
   X,
@@ -25,6 +26,7 @@ import { CATEGORIES, TOOLS, TOOL_COUNT, type ToolMeta } from "./registry";
 import { CAT_COLORS, chipBase } from "./bruts";
 import { Home, Ticker } from "./home";
 import { VaultApp } from "./vault-app";
+import { AiAcademyApp } from "./ai-academy-app";
 import {
   CustomCursor,
   GrainOverlay,
@@ -92,13 +94,15 @@ function Nav({
   onSurprise,
   side,
   onVault,
+  onAcademy,
 }: {
   onHome: () => void;
   onOpenPalette: () => void;
   onOpenMenu: () => void;
   onSurprise: () => void;
-  side: "tools" | "vault";
+  side: "tools" | "vault" | "ai";
   onVault: () => void;
+  onAcademy: () => void;
 }) {
   const clicks = useRef(0);
   const clickTimer = useRef<number | null>(null);
@@ -154,14 +158,14 @@ function Nav({
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
           <button
             type="button"
-            onClick={() => { if (side === "vault") onHome(); jumpTo("headliners"); }}
+            onClick={() => { if (side !== "tools") onHome(); jumpTo("headliners"); }}
             className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#FF7A3D] hover:decoration-[3px]"
           >
             <ScrambleText text="THE HEADLINERS" />
           </button>
           <button
             type="button"
-            onClick={() => { if (side === "vault") onHome(); jumpTo("toolbox"); }}
+            onClick={() => { if (side !== "tools") onHome(); jumpTo("toolbox"); }}
             className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#141414] underline-offset-4 hover:underline hover:decoration-[#C6F24E] hover:decoration-[3px]"
           >
             <ScrambleText text="THE TOOLBOX" />
@@ -173,6 +177,14 @@ function Nav({
           >
             <Vault className="h-3.5 w-3.5" strokeWidth={2.5} />
             THE VAULT
+          </button>
+          <button
+            type="button"
+            onClick={onAcademy}
+            className={`brut-lift inline-flex items-center gap-1.5 border-2 border-[#141414] px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] ${side === "ai" ? "bg-[#7C5CFF] text-[#141414]" : "bg-[#141414] text-[#F3EFE6] hover:bg-[#7C5CFF] hover:text-[#141414]"}`}
+          >
+            <GraduationCap className="h-3.5 w-3.5" strokeWidth={2.5} />
+            AI ACADEMY
           </button>
           <button
             type="button"
@@ -218,6 +230,7 @@ function MobileMenu({
   onSurprise,
   onCatJump,
   onVault,
+  onAcademy,
   onTools,
 }: {
   open: boolean;
@@ -226,6 +239,7 @@ function MobileMenu({
   onSurprise: () => void;
   onCatJump: (c: (typeof CATEGORIES)[number]["id"]) => void;
   onVault: () => void;
+  onAcademy: () => void;
   onTools: () => void;
 }) {
   useEffect(() => {
@@ -294,6 +308,7 @@ function MobileMenu({
                 { label: "The Headliners", color: "#FFD43B", fn: () => { onTools(); jumpTo("headliners"); } },
                 { label: "The Whole Toolbox", color: "#F3EFE6", fn: () => { onTools(); jumpTo("toolbox"); } },
                 { label: "★ The Vault — Student Credits", color: "#C6F24E", fn: onVault },
+                { label: "★ AI Academy — Free Roadmaps", color: "#B9A6FF", fn: onAcademy },
                 { label: "Surprise Me", color: "#FF9DE2", fn: onSurprise },
               ].map((l) => (
                 <motion.button
@@ -523,7 +538,7 @@ export default function ZyricApp() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteMounted, setPaletteMounted] = useState(false);
   const [paletteQuery, setPaletteQuery] = useState("");
-  const [side, setSide] = useState<"tools" | "vault">("tools");
+  const [side, setSide] = useState<"tools" | "vault" | "ai">("tools");
 
   const paletteResults = useMemo(() => rankTools(paletteQuery), [paletteQuery]);
 
@@ -561,6 +576,13 @@ export default function ZyricApp() {
     setActiveToolId(null);
     setMenuOpen(false);
     setSide("vault");
+    scrollToTop();
+  }, []);
+
+  const openAcademy = useCallback(() => {
+    setActiveToolId(null);
+    setMenuOpen(false);
+    setSide("ai");
     scrollToTop();
   }, []);
 
@@ -637,6 +659,7 @@ export default function ZyricApp() {
         onSurprise={surprise}
         side={side}
         onVault={openVault}
+        onAcademy={openAcademy}
       />
 
       <AnimatePresence mode="wait">
@@ -649,6 +672,8 @@ export default function ZyricApp() {
           />
         ) : side === "vault" ? (
           <VaultApp key="vault" />
+        ) : side === "ai" ? (
+          <AiAcademyApp key="ai" />
         ) : (
           <motion.div
             key="home"
@@ -679,6 +704,7 @@ export default function ZyricApp() {
         onSurprise={surprise}
         onCatJump={catJump}
         onVault={openVault}
+        onAcademy={openAcademy}
         onTools={goHome}
       />
 

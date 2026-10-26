@@ -294,6 +294,7 @@ import { craftMeta } from "./kit-craft";
 import { shootMeta } from "./kit-shoot";
 import { playMeta } from "./kit-play";
 import { rotasMeta } from "./kit-rotas";
+import { aiKitMeta } from "./kit-ai";
 import type { ToolMeta, CategoryId } from "./tool-types";
 
 export type { ToolMeta, CategoryId } from "./tool-types";
@@ -1398,6 +1399,8 @@ export const TOOLS: ToolMeta[] = [
   ...shootMeta,
   ...playMeta,
   ...rotasMeta,
+  // ---------------- ai-academy wave: prompt craft, study machines & free-tier math ----------------
+  ...aiKitMeta,
 ];
 
 export const TOOL_COUNT = TOOLS.length;
