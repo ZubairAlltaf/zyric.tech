@@ -226,6 +226,7 @@ export function Slider({
   step = 1,
   suffix = "",
   accent,
+  hint,
 }: {
   label: string;
   value: number;
@@ -235,6 +236,7 @@ export function Slider({
   step?: number;
   suffix?: string;
   accent?: string;
+  hint?: string;
 }) {
   return (
     <div className="min-w-0">
@@ -255,6 +257,7 @@ export function Slider({
         className="w-full accent-amber-400"
         style={accent ? { accentColor: accent } : undefined}
       />
+      {hint ? <p className="mt-0.5 text-[10px] text-zinc-600">{hint}</p> : null}
     </div>
   );
 }

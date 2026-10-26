@@ -282,6 +282,18 @@ import { outdoorMeta } from "./kit-outdoor";
 import { travelMeta } from "./kit-travel";
 import { hobbiesMeta } from "./kit-hobbies";
 import { moneyPlusMeta } from "./kit-moneyplus";
+// timeless-tools wave: music · sport · classroom · garden · kitchen · craft · shoot · play · rotas
+import { musicMeta } from "./kit-music";
+import { sportMeta } from "./kit-sport";
+import { sportMoreMeta } from "./kit-sportmore";
+import { classroomMeta } from "./kit-classroom";
+import { gardenMeta } from "./kit-garden";
+import { gardenMoreMeta } from "./kit-gardenmore";
+import { kitchenMeta } from "./kit-kitchen";
+import { craftMeta } from "./kit-craft";
+import { shootMeta } from "./kit-shoot";
+import { playMeta } from "./kit-play";
+import { rotasMeta } from "./kit-rotas";
 import type { ToolMeta, CategoryId } from "./tool-types";
 
 export type { ToolMeta, CategoryId } from "./tool-types";
@@ -1374,6 +1386,18 @@ export const TOOLS: ToolMeta[] = [
   ...travelMeta,
   ...hobbiesMeta,
   ...moneyPlusMeta,
+  // ---------------- timeless-tools wave: just-code planners & splitters ----------------
+  ...musicMeta,
+  ...sportMeta,
+  ...sportMoreMeta,
+  ...classroomMeta,
+  ...gardenMeta,
+  ...gardenMoreMeta,
+  ...kitchenMeta,
+  ...craftMeta,
+  ...shootMeta,
+  ...playMeta,
+  ...rotasMeta,
 ];
 
 export const TOOL_COUNT = TOOLS.length;
