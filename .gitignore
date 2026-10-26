@@ -63,4 +63,5 @@ Caddyfile
 qamarix_*.html
 worklog.md
 agent-ctx/
-bun.lock.bak
+bun.lock.baktool-results/
+dev.log
