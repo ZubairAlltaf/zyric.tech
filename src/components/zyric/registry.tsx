@@ -101,6 +101,8 @@ import {
 
 import {
   NotesTool,
+} from "./notes-pro";
+import {
   WordCounterTool,
   CaseConverterTool,
   LoremTool,
@@ -113,10 +115,16 @@ import {
 } from "./text-tools-add";
 import {
   ExpenseTool,
+} from "./money-pro";
+import {
   HabitTool,
+} from "./habit-pro";
+import {
   TodoTool,
+} from "./tasks-pro";
+import {
   WaterTool,
-} from "./tracker-tools";
+} from "./water-pro";
 import {
   PercentageTool,
   LoanTool,
@@ -132,9 +140,11 @@ import {
 import {
   UnitConverterTool,
   CurrencyTool,
-  PomodoroTool,
   StopwatchTool,
 } from "./convert-time-tools";
+import {
+  PomodoroTool,
+} from "./pomodoro-pro";
 import {
   TimestampTool,
   BaseConverterTool,
@@ -524,11 +534,11 @@ export const TOOLS: ToolMeta[] = [
   // ---------------- Notes & Writing ----------------
   {
     id: "notes",
-    name: "Quick Notes",
-    description: "A fast sticky-note pad that auto-saves in your browser.",
+    name: "Notes Studio",
+    description: "Full notes app: folders, tags, checklists, markdown, archive & trash — auto-saved.",
     category: "notes",
     icon: NotebookPen,
-    keywords: "notes notepad memo sticky write thoughts scratchpad",
+    keywords: "notes notepad memo sticky write thoughts scratchpad markdown checklist tags folders journal diary",
     badge: "saved",
     component: NotesTool,
   },
@@ -639,41 +649,41 @@ export const TOOLS: ToolMeta[] = [
   // ---------------- Trackers ----------------
   {
     id: "expense-tracker",
-    name: "Expense Tracker",
-    description: "Log income & expenses, see your balance — no account needed.",
+    name: "Expense Tracker Pro",
+    description: "Monthly budgets, category charts, edit entries, CSV export — your money, mapped.",
     category: "trackers",
     icon: Wallet,
-    keywords: "expense income money budget finance tracker spending balance",
+    keywords: "expense income money budget finance tracker spending balance csv chart",
     badge: "saved",
     component: ExpenseTool,
   },
   {
     id: "habit-tracker",
-    name: "Habit Tracker",
-    description: "Build streaks with a 7-day check-off grid for each habit.",
+    name: "Habit Tracker Pro",
+    description: "Streaks, best streaks, 30-day heatmaps, weekly targets and emoji per habit.",
     category: "trackers",
     icon: Flame,
-    keywords: "habit streak daily routine check consistency goals",
+    keywords: "habit streak daily routine check consistency goals heatmap target",
     badge: "saved",
     component: HabitTool,
   },
   {
     id: "todo",
-    name: "To-Do List",
-    description: "Tasks with priorities, filters and one-tap completion.",
+    name: "Tasks Pro",
+    description: "Projects, due dates, subtasks, tags, priorities and smart order — a real task manager.",
     category: "trackers",
     icon: ListTodo,
-    keywords: "todo tasks checklist productivity priorities done",
+    keywords: "todo tasks checklist productivity priorities done projects subtasks due tags",
     badge: "saved",
     component: TodoTool,
   },
   {
     id: "water-tracker",
-    name: "Water Tracker",
-    description: "Tap a button per glass — daily goal with auto-reset.",
+    name: "Water Tracker Pro",
+    description: "Millilitre drink log, undo, weekly chart and goal streaks — hydration with memory.",
     category: "trackers",
     icon: Droplets,
-    keywords: "water hydration drink glasses daily health goal",
+    keywords: "water hydration drink glasses daily health goal ml liters streak chart",
     badge: "saved",
     component: WaterTool,
   },
@@ -808,11 +818,11 @@ export const TOOLS: ToolMeta[] = [
   // ---------------- Time & Focus ----------------
   {
     id: "pomodoro",
-    name: "Pomodoro Timer",
-    description: "25/5 focus cycles with auto-breaks and session counter.",
+    name: "Pomodoro Studio",
+    description: "Custom focus lengths, task labels, session history and stats for deep work.",
     category: "time",
     icon: Brain,
-    keywords: "pomodoro focus timer study work productivity break 25",
+    keywords: "pomodoro focus timer study work productivity break 25 sessions stats",
     component: PomodoroTool,
   },
   {
