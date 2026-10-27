@@ -138,9 +138,7 @@ import {
   TipTool,
 } from "./calc-tools-add";
 import {
-  UnitConverterTool,
   CurrencyTool,
-  StopwatchTool,
 } from "./convert-time-tools";
 import {
   PomodoroTool,
@@ -149,15 +147,27 @@ import {
   TimestampTool,
   BaseConverterTool,
   RomanTool,
-  CountdownTool,
 } from "./convert-tools-add";
 import {
-  PasswordTool,
   UuidTool,
   EncoderTool,
   JsonTool,
-  QrTool,
 } from "./dev-tools";
+import {
+  StopwatchTool,
+} from "./stopwatch-pro";
+import {
+  UnitConverterTool,
+} from "./unit-converter-pro";
+import {
+  CountdownTool,
+} from "./countdown-pro";
+import {
+  PasswordTool,
+} from "./password-pro";
+import {
+  QrTool,
+} from "./qr-studio";
 import {
   HashTool,
   RegexTool,
@@ -190,9 +200,11 @@ import {
   GradientTool,
 } from "./color-tools";
 import {
-  InvoiceTool,
   NumberWordsTool,
 } from "./biz-tools";
+import {
+  InvoiceTool,
+} from "./invoice-pro";
 import { RandomPickerTool } from "./random-tools";
 import {
   BoxShadowTool,
@@ -768,11 +780,11 @@ export const TOOLS: ToolMeta[] = [
   // ---------------- Converters ----------------
   {
     id: "unit-converter",
-    name: "Unit Converter",
-    description: "Length, weight, data, speed and temperature in one place.",
+    name: "Unit Converter Pro",
+    description: "11 categories from light-years to PSI — converts to every unit at once.",
     category: "converters",
     icon: Ruler,
-    keywords: "unit convert length weight temperature data speed km miles celsius fahrenheit kg pounds",
+    keywords: "unit convert length weight temperature data speed area volume time energy pressure angle km miles celsius fahrenheit kg pounds",
     component: UnitConverterTool,
   },
   {
@@ -827,21 +839,20 @@ export const TOOLS: ToolMeta[] = [
   },
   {
     id: "stopwatch",
-    name: "Stopwatch",
-    description: "Precise timing with laps and split times.",
+    name: "Stopwatch Pro",
+    description: "Laps with best/worst highlighting, CSV export, keyboard shortcuts, survives reloads.",
     category: "time",
     icon: Timer,
-    keywords: "stopwatch timer laps splits countdown exercise time",
+    keywords: "stopwatch timer laps splits best worst export csv countdown exercise time racing",
     component: StopwatchTool,
   },
   {
     id: "countdown",
-    name: "Countdown Timer",
-    description: "Egg-timer countdowns with presets, custom minutes and a bell.",
+    name: "Countdown Pro",
+    description: "Labeled timers, alarm sounds, repeat mode, saved presets, tab-title countdown.",
     category: "time",
     icon: AlarmClock,
-    keywords: "countdown egg timer alarm kitchen minutes reminder bell",
-    badge: "new",
+    keywords: "countdown egg timer alarm kitchen minutes reminder bell repeat interval saved wake",
     component: CountdownTool,
   },
   {
@@ -857,11 +868,11 @@ export const TOOLS: ToolMeta[] = [
   // ---------------- Generators & Dev ----------------
   {
     id: "password",
-    name: "Password Generator",
-    description: "Crypto-strong passwords with a strength meter.",
+    name: "Password Generator Pro",
+    description: "Random, passphrases and PINs in bulk — with entropy and crack-time estimates.",
     category: "generators",
     icon: KeyRound,
-    keywords: "password secure random generator strong symbols entropy",
+    keywords: "password secure random generator strong symbols entropy passphrase pin bulk crack",
     badge: "local",
     component: PasswordTool,
   },
@@ -894,11 +905,11 @@ export const TOOLS: ToolMeta[] = [
   },
   {
     id: "qr",
-    name: "QR Code Maker",
-    description: "Custom-colored QR codes you can download as PNG.",
+    name: "QR Studio",
+    description: "WiFi, vCard, email & SMS codes with logos, colors, sizes — PNG + SVG, all free.",
     category: "generators",
     icon: QrCode,
-    keywords: "qr code generator url link scan png download",
+    keywords: "qr code generator url link wifi vcard contact sms email scan png svg logo download",
     component: QrTool,
   },
   {
@@ -1139,11 +1150,11 @@ export const TOOLS: ToolMeta[] = [
   // ---------------- Business & Money ----------------
   {
     id: "invoice",
-    name: "Invoice Generator",
-    description: "Line items, tax, totals in words — print or save as PDF instantly.",
+    name: "Invoice Pro",
+    description: "Logos, saved vault, status stamps, balance due — then print or save as PDF.",
     category: "business",
     icon: Printer,
-    keywords: "invoice generator bill receipt client freelance pdf print tax total",
+    keywords: "invoice generator bill receipt client freelance pdf print tax total vault logo paid balance",
     badge: "saved",
     component: InvoiceTool,
   },
